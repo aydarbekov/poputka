@@ -1,12 +1,15 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from accounts.views import SignUp, UserDetailView
-from webapp.views import IndexView, AnnounceCreateView, AnnounceDetailView, AnnounceUpdateView, AnnounceDeleteView
+from webapp.views import IndexView, AnnounceCreateView, AnnounceDetailView, AnnounceUpdateView, AnnounceDeleteView, \
+    PassengersList, DriversList
 
 app_name = 'webapp'
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
+    path('passengers/', PassengersList.as_view(), name="passengers_list"),
+    path('drivers/', DriversList.as_view(), name="drivers_list"),
     path('announce/create/', AnnounceCreateView.as_view(), name='announce_create'),
     path('announce/detail/<int:pk>/', AnnounceDetailView.as_view(), name='announce_detail'),
     path('announce/update/<int:pk>/', AnnounceUpdateView.as_view(), name='announce_update'),

@@ -2,8 +2,28 @@ from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES
 
-from webapp.models import Announcements
+
+class PassengersList(ListView):
+    model = Announcements
+    template_name = 'index.html'
+    context_object_name = 'announcements'
+
+    def get_queryset(self, *args, **kwargs):
+        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[0][0])
+
+
+class DriversList(ListView):
+    model = Announcements
+    template_name = 'index.html'
+    context_object_name = 'announcements'
+
+    def get_queryset(self, *args, **kwargs):
+        print(Announcements.objects.all())
+        print(Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[0][0]))
+        print(Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[1][0]))
+        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[1][0])
 
 
 class IndexView(ListView):
