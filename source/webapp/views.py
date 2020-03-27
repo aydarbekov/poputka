@@ -19,7 +19,7 @@ class AnnounceCreateView(CreateView):
     model = Announcements
     template_name = 'announce_create.html'
     # form_class = AnnounceCreationForm
-    fields = ['departure_time', 'seats', 'luggage', 'place_from', 'place_to', 'car_number', 'car_model', 'price', 'type',
+    fields = ['departure_time', 'seats', 'luggage', 'place_from', 'place_to', 'price', 'type',
             'description', 'photo', 'status']
     # clients = models.ManyToManyField('auth.User', null=True, blank=True, related_name='clients',
     #                                  verbose_name='Клиенты')
@@ -39,8 +39,6 @@ class AnnounceCreateView(CreateView):
         self.object.luggage = form.cleaned_data['luggage']
         self.object.place_from = form.cleaned_data['place_from']
         self.object.place_to = form.cleaned_data['place_to']
-        self.object.car_number = form.cleaned_data['car_number']
-        self.object.car_model = form.cleaned_data['car_model']
         self.object.price = form.cleaned_data['price']
         self.object.type = form.cleaned_data['type']
         self.object.description = form.cleaned_data['description']
@@ -58,25 +56,26 @@ class AnnounceCreateView(CreateView):
         return reverse('webapp:index')
 
 
-# class AnnounceDetailView(DeleteView):
-#     model = Ad
-#     template_name = 'announce_detail.html'
-#     context_object_name = 'announce'
+class AnnounceDetailView(DeleteView):
+    model = Announcements
+    template_name = 'announce_detail.html'
+    context_object_name = 'announce'
 #
 #
-# class AnnounceUpdateView(UpdateView):
-#     model = Ad
-#     template_name = 'change.html'
-#     fields = ['direction', 'time', 'seats', 'luggage', 'place_from', 'place_to', 'car_number', 'car', 'price']
-#     context_object_name = 'announce'
-#
-#     def get_success_url(self):
-#         return reverse('webapp:index')
-#
-#
-# class AnnounceDeleteView(DeleteView):
-#     model = Ad
-#     template_name = 'delete.html'
-#
-#     def get_success_url(self):
-#         return reverse('webapp:index')
+class AnnounceUpdateView(UpdateView):
+    model = Announcements
+    template_name = 'change.html'
+    fields = ['departure_time', 'seats', 'luggage', 'place_from', 'place_to', 'price', 'type',
+            'description', 'photo', 'status']
+    context_object_name = 'announce'
+
+    def get_success_url(self):
+        return reverse('webapp:index')
+
+
+class AnnounceDeleteView(DeleteView):
+    model = Announcements
+    template_name = 'delete.html'
+
+    def get_success_url(self):
+        return reverse('webapp:index')
