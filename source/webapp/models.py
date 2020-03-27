@@ -35,7 +35,7 @@ class Announcements(models.Model):
     car_number = models.CharField(max_length=50, null=True, blank=True, verbose_name='Номер авто')
     price = models.IntegerField(null=True, blank=True, verbose_name='Цена')
     photo = models.ImageField(upload_to='ads_photo', null=True, blank=True, verbose_name='Фото')
-    clients = models.ManyToManyField('auth.User', related_name='experts', verbose_name='Область аккредитации')
+    clients = models.ManyToManyField('auth.User', null=True, blank=True, related_name='experts', verbose_name='Область аккредитации')
     status = models.CharField(max_length=50, choices=ANNOUNCEMENT_STATUS_CHOICES, verbose_name='Статус')
 
     def __str__(self):
