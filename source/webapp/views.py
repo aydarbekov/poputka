@@ -6,10 +6,10 @@ from django.urls import reverse
 from webapp.models import Announcements
 
 
-# class IndexView(ListView):
-#     model = Announcements
-#     template_name = 'index.html'
-#     context_object_name = 'announcements'
+class IndexView(ListView):
+    model = Announcements
+    template_name = 'index.html'
+    context_object_name = 'announcements'
 
     # def get_queryset(self, *args, **kwargs):
     #         return Announcements.objects.filter(user__profile__driver__status='free')
