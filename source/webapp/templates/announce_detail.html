@@ -1,0 +1,28 @@
+{#{% extends 'base.html' %}#}
+{#{% load staticfiles %}#}
+{#{%  block content %}#}
+{#    <div class="card" style="width: 18rem;">#}
+{#    {% if  ad.image.all.first.photos.url %}#}
+{#        <img src="{{ ad.image.all.first.photos.url }}" class="card-img-top" alt="...">#}
+{#        {% else %}#}
+{#        <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">#}
+{#        {% endif %}#}
+{#  <div class="card-body">#}
+{#    <h5 class="card-title">Направление: {{ announce.direction }}</h5>#}
+{#    <p class="card-text">Время: {{ announce.time }}</p>#}
+{#      <p class="card-text">Места: {{ announce.seats }}</p>#}
+{#      <p class="card-text">Багаж: {{ announce.luggage }}</p>#}
+{#      <p class="card-text">Автор:  <a href="{% url 'accounts:user_detail' ad.author.pk %}">{{ ad.author}}</a></p>#}
+{#      <tr data-href="{% url 'accounts:user_detail' use.pk %}">#}
+{#    <a href="#" class="btn btn-primary">Go somewhere</a>#}
+{#      <a href="{% url 'webapp:image_add' ann.pk %}" class="btn btn-primary">Добавить фото</a>#}
+{#      <a href="{% url 'webapp:announce_detail' ad.pk%}" class="btn btn-success">Посмотреть</a>#}
+{#      <a href="{% url 'webapp:announce_update' announce.pk%}" class="btn btn-warning">Редактировать</a>#}
+{#      <a href="{% url 'webapp:announce_delete' announce.pk %}" class="btn btn-danger">Удалить</a>#}
+{#      {% if request.user.is_authenticated %}#}
+{#            {% include 'partial/favorites_buttons.html' %}#}
+{#        {% endif %}#}
+{#  </div>#}
+{#</div>#}
+{#    <script src="{% static 'js/main.js' %}"></script>#}
+{#{% endblock %}#}
