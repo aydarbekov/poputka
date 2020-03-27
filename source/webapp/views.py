@@ -15,11 +15,14 @@ class IndexView(ListView):
     #         return Announcements.objects.filter(user__profile__driver__status='free')
 
 
-# class AnnounceCreateView(CreateView):
-#     model = Ad
-#     template_name = 'announce_create.html'
-#     # form_class = AnnounceCreationForm
-#     fields = ['direction', 'time', 'seats', 'luggage', 'place_from', 'place_to', 'car_number', 'car', 'price']
+class AnnounceCreateView(CreateView):
+    model = Announcements
+    template_name = 'announce_create.html'
+    # form_class = AnnounceCreationForm
+    fields = ['departure_time', 'seats', 'luggage', 'place_from', 'place_to', 'car_number', 'car_model', 'price', 'type',
+            'description', 'photo', 'status']
+    # clients = models.ManyToManyField('auth.User', null=True, blank=True, related_name='clients',
+    #                                  verbose_name='Клиенты')
 
     # def get_form_kwargs(self):
     #     print(self.request.user)
@@ -27,29 +30,32 @@ class IndexView(ListView):
     #     kwargs['author'] = self.request.user
     #     return kwargs
 
-    # def form_valid(self, form):
-    #     self.object = form.save(commit=False)
-    #     user = self.request.user
-    #     # mobile_phone = form.cleaned_data['mobile_phone']
-    #     self.object.direction = form.cleaned_data['direction']
-    #     self.object.time = form.cleaned_data['time']
-    #     self.object.seats = form.cleaned_data['seats']
-    #     self.object.luggage = form.cleaned_data['luggage']
-    #     self.object.place_from = form.cleaned_data['place_from']
-    #     self.object.place_to = form.cleaned_data['place_to']
-    #     self.object.car_number = form.cleaned_data['car_number']
-    #     self.object.car = form.cleaned_data['car']
-    #     self.object.price = form.cleaned_data['price']
-    #     # if mobile_phone:
-    #     #     self.object.mobile_phone = mobile_phone
-    #     # else:
-    #     #     self.object.phone = self.request.user.profile.phone_number
-    #     self.object.user_id = user.pk
-    #     self.object.save()
-    #     return HttpResponseRedirect(self.get_success_url())
-    #
-    # def get_success_url(self):
-    #     return reverse('webapp:index')
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        user = self.request.user
+        # mobile_phone = form.cleaned_data['mobile_phone']
+        self.object.departure_time = form.cleaned_data['departure_time']
+        self.object.seats = form.cleaned_data['seats']
+        self.object.luggage = form.cleaned_data['luggage']
+        self.object.place_from = form.cleaned_data['place_from']
+        self.object.place_to = form.cleaned_data['place_to']
+        self.object.car_number = form.cleaned_data['car_number']
+        self.object.car_model = form.cleaned_data['car_model']
+        self.object.price = form.cleaned_data['price']
+        self.object.type = form.cleaned_data['type']
+        self.object.description = form.cleaned_data['description']
+        self.object.photo = form.cleaned_data['photo']
+        self.object.status = form.cleaned_data['status']
+        # if mobile_phone:
+        #     self.object.mobile_phone = mobile_phone
+        # else:
+        #     self.object.phone = self.request.user.profile.phone_number
+        self.object.author = user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('webapp:index')
 
 
 # class AnnounceDetailView(DeleteView):

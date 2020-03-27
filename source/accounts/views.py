@@ -12,15 +12,21 @@ class SignUp(CreateView):
     success_url = reverse_lazy('accounts:login')
 
     def get_context_data(self, **kwargs):
-        form_type = self.request.GET.get('form')
-        if 'formset' not in kwargs:
-            kwargs['formset'] = ProfileFormset()
-        return super().get_context_data(**kwargs)
+        data = super(SignUp, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['formset'] = ProfileFormset(self.request.POST)
+        else:
+            data['formset'] = ProfileFormset()
+        return data
+            # form_type = self.request.GET.get('form')
+        # if 'formset' not in kwargs:
+        #     kwargs['formset'] = ProfileFormset()
+        # return super().get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
         self.object = None
         form = self.get_form()
-        formset = ProfileFormset(data=request.POST)
+        formset = ProfileFormset(self.request.POST, self.request.FILES)
 
         if form.is_valid() and formset.is_valid():
             return self.form_valid_for_full(form, formset)

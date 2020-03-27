@@ -20,14 +20,14 @@
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
               <li class="nav-item active">
-{#                <a class="nav-link" href="{% url 'webapp:index' %}">Home <span class="sr-only">(current)</span></a>#}
+                <a class="nav-link" href="{% url 'webapp:index' %}">Home <span class="sr-only">(current)</span></a>
               </li>
                 {% block menu %}{% endblock %}
                 <li class="nav-item menu-right">
                         {% if request.user.is_authenticated %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'accounts:user_detail' request.user.pk %}">Привет, {{ request.user }}!</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'accounts:logout'  %}">Выйти</a></li>
-{#                            <li class="nav-item"><a class="nav-link" href="{% url 'webapp:announce_create'  %}">Подать объявление</a></li>#}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'webapp:announce_create'  %}">Подать объявление</a></li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login'  %}">Войти</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'accounts:create' %}">Регистрация</a></li>

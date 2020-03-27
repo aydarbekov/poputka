@@ -2,7 +2,7 @@
 {% block title %}Регистрация{% endblock %}
 {% block content %}
         <h1 class="text-center">Регистрация</h1>
-        <form action="{% url 'accounts:create' %}" method="post">
+        <form action="{% url 'accounts:create' %}" method="post" enctype="multipart/form-data">
             {% include "partial/form_without_button.html" %}
             {% include 'registration/profile_formset.html' %}
             <div class="text-center mt-4 mb-4">
