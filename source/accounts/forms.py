@@ -2,8 +2,6 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import inlineformset_factory
-
 from accounts.models import Profiles
 
 
@@ -22,15 +20,14 @@ class SignUpForm(UserCreationForm):
             return email
 
 
-class ProfileForm_2(forms.ModelForm):
+class UpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        exclude = []
+        fields = ['username', 'first_name', 'last_name', 'email']
 
 
-ProfileFormset = inlineformset_factory(User, Profiles, ProfileForm_2, extra=1,
-                                         can_delete=True)
+class ProfileForm_2(forms.ModelForm):
+    class Meta:
+        model = Profiles
+        exclude = ['user']
 
-
-# class DateForm(forms.Form):
-#     date = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])

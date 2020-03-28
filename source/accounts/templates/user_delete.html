@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Удаление{% endblock %}
+{% block content %}
+        <h1 class="text-center my-3">Удалить {{ user.first_name }} {{ user.last_name }}</h1>
+        <p class="text-center">Вы уверены, что хотите удалить {{ user.first_name }} {{ user.last_name }}</p>
+        <form action="{% url 'accounts:user_delete' user.pk %}" method="POST" class="text-center">
+            {% csrf_token %}
+            <input type="submit" value="Да" class="btn btn-danger">
+            <a id="cancelDel" href="{% url "webapp:index" %}" class="btn btn-dark ml-3">Нет</a>
+        </form>
+{% endblock %}

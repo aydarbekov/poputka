@@ -4,7 +4,7 @@
         <h1 class="text-center">Регистрация</h1>
         <form action="{% url 'accounts:create' %}" method="post" enctype="multipart/form-data">
             {% include "partial/form_without_button.html" %}
-            {% include 'registration/profile_formset.html' %}
+            {% include 'registration/form2_without_button.html' %}
             <div class="text-center mt-4 mb-4">
                 <input type="submit" class="btn btn-dark" id="createExpert" value="Создать">
             </div>

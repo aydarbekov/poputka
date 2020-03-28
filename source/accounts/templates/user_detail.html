@@ -2,39 +2,55 @@
 {% block title %}{{ user_obj.username }}{% endblock %}
 {% block menu %}
 {#    {% if user_obj == request.user %}#}
-{#        <li><a href="{% url 'accounts:user_update' user_obj.pk %}">Edit profile</a></li>#}
+        <li><a href="{% url 'accounts:user_update' user_obj.pk %}">Edit profile</a></li>
+        <li><a href="{% url 'accounts:user_delete' user_obj.pk %}">Delete profile</a></li>
+
 {#        <li><a href="{% url 'accounts:user_change_password' user_obj.pk %}">Change password</a></li>#}
 {#    {% endif %}#}
 {% endblock %}
 {% block content %}
+    {% if  user_obj.profile.photo %}
+        <img src="{{ user_obj.profile.photo.url }}" style="width: 300px; height: 300px" class="user_photo">
+    {% endif %}
     <h1>Профиль: {{ user_obj.username }}</h1>
     <p>Имя: <b>{{ user_obj.first_name }}</b></p>
     <p>Фамилия: {{ user_obj.last_name }}</p>
     <p>Почта: {{ user_obj.email }}</p>
-    ФОТО<img src="{{ user_obj.client.photo.url }}" class="user_photo">
-    <img src="{{ user_obj.client.photo.url }}" class="user_photo">
-    <img src="{{ user_obj.profile.photo.url }}" class="user_photo">
-    <p>Телефон: {{ user_obj.profile.type }}</p>
-
-
-    <div class="comment-list">
-        <h2>Files</h2>
-    {% if is_paginated %}
-         {% include 'partial/pagination.html' %}
+    <p>Тип: {{ user_obj.profile.type }}</p>
+    <p>Телефон: {{ user_obj.profile.mobile_phone }}</p>
+    <p>Страна: {{ user_obj.profile.country }}</p>
+    <p>Город: {{ user_obj.profile.city }}</p>
+    <p>Уведомления: {{ user_obj.profile.notification }}</p>
+    {% if user_obj.profile.type == 'driver' %}
+        <p>Статус: {{ user_obj.profile.status }}</p>
+        <p>Модель авто: {{ user_obj.profile.car_model }}</p>
+        <p>Номер авто: {{ user_obj.profile.car_number }}</p>
+        <p>Кол-во сидений: {{ user_obj.profile.car_seats }}</p>
     {% endif %}
-        {% for file in files %}
-            {% if file.type == 'general' or file.author == request.user %}
-                <a href="{% url 'webapp:file_detail' file.pk %}">{{ file.name }}</a>
-                <div>Автор: {{ file.author }}
-                <div>Создано: {{ file.creation_date }}</div>
-                <a href="{{ file.file.url }}" class="btn btn-primary">Скачать</a>
-                <p>{{ file.type }}</p>
-                <hr/>
-            {% endif %}
-        {% empty %}
-            <p>No files yet.</p>
-        {% endfor %}
 
-    </div>
-    </div>
+
+
+
+
+
+{#    <div class="comment-list">#}
+{#        <h2>Files</h2>#}
+{#    {% if is_paginated %}#}
+{#         {% include 'partial/pagination.html' %}#}
+{#    {% endif %}#}
+{#        {% for file in files %}#}
+{#            {% if file.type == 'general' or file.author == request.user %}#}
+{#                <a href="{% url 'webapp:file_detail' file.pk %}">{{ file.name }}</a>#}
+{#                <div>Автор: {{ file.author }}#}
+{#                <div>Создано: {{ file.creation_date }}</div>#}
+{#                <a href="{{ file.file.url }}" class="btn btn-primary">Скачать</a>#}
+{#                <p>{{ file.type }}</p>#}
+{#                <hr/>#}
+{#            {% endif %}#}
+{#        {% empty %}#}
+{#            <p>No files yet.</p>#}
+{#        {% endfor %}#}
+{##}
+{#    </div>#}
+{#    </div>#}
 {% endblock %}
