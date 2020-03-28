@@ -5,8 +5,8 @@
         <h1>Объявления:</h1>
         {% for announcement in announcements %}
             <div class="card" style="width: 18rem;">
-            {% if  announcement.image.all.first.photos.url %}
-                <img src="{{ ad.image.all.first.photos.url }}" class="card-img-top" alt="...">
+            {% if  announcement.photo.url %}
+                <img src="{{ announcement.photo.url }}" class="card-img-top" alt="...">
             {% else %}
                 <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">
             {% endif %}
