@@ -32,16 +32,16 @@ class IndexView(ListView):
     def change_status(self, *args, **kwargs):
         for announcement in Announcements.objects.all():
             timezone = announcement.departure_time.tzinfo
-            print("Departure", announcement.departure_time)
+            # print("Departure", announcement.departure_time)
             time_now = datetime.now(timezone)
             time_end = time_now + timedelta(hours=1)
-            print("END", time_end)
+            # print("END", time_end)
             if announcement.departure_time <= time_end:
-                print("Даааа")
-                print(announcement.status)
+                # print("Даааа")
+                # print(announcement.status)
                 announcement.status = ANNOUNCEMENT_STATUS_CHOICES[1][0]
                 announcement.save()
-                print(announcement.status)
+                # print(announcement.status)
 
     def get(self, request, *args, **kwargs):
         self.change_status()
