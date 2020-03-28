@@ -12,7 +12,7 @@ class PassengersList(ListView):
     context_object_name = 'announcements'
 
     def get_queryset(self, *args, **kwargs):
-        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[0][0])
+        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[0][0], status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
 
 
 class DriversList(ListView):
@@ -21,7 +21,7 @@ class DriversList(ListView):
     context_object_name = 'announcements'
 
     def get_queryset(self, *args, **kwargs):
-        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[1][0])
+        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[1][0], status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
 
 
 class IndexView(ListView):
