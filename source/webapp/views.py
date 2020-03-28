@@ -1,8 +1,9 @@
+from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES
+from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, ANNOUNCEMENT_STATUS_CHOICES
 
 
 class PassengersList(ListView):
@@ -20,9 +21,6 @@ class DriversList(ListView):
     context_object_name = 'announcements'
 
     def get_queryset(self, *args, **kwargs):
-        print(Announcements.objects.all())
-        print(Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[0][0]))
-        print(Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[1][0]))
         return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[1][0])
 
 
@@ -31,8 +29,26 @@ class IndexView(ListView):
     template_name = 'index.html'
     context_object_name = 'announcements'
 
-    # def get_queryset(self, *args, **kwargs):
-    #         return Announcements.objects.filter(user__profile__driver__status='free')
+    def change_status(self, *args, **kwargs):
+        for announcement in Announcements.objects.all():
+            timezone = announcement.departure_time.tzinfo
+            print("Departure", announcement.departure_time)
+            time_now = datetime.now(timezone)
+            time_end = time_now + timedelta(hours=1)
+            print("END", time_end)
+            if announcement.departure_time <= time_end:
+                print("Даааа")
+                print(announcement.status)
+                announcement.status = ANNOUNCEMENT_STATUS_CHOICES[1][0]
+                announcement.save()
+                print(announcement.status)
+
+    def get(self, request, *args, **kwargs):
+        self.change_status()
+        return super(IndexView, self).get(request, *args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        return Announcements.objects.filter(status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
 
 
 class AnnounceCreateView(CreateView):
