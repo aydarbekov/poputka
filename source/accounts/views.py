@@ -48,25 +48,14 @@ class UserDetailView(DetailView):
     template_name = 'user_detail.html'
     context_object_name = 'user_obj'
 
-    # Пригодится для вывода истории
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     # context['form'] = TaskForm()
-    #     files = context['user_obj'].file.order_by('-creation_date')
-    #
-    #     # print(files.objects.filter(type='general'))
-    #     # print(files)
-    #     self.paginate_files_to_context(files, context)
-    #     return context
-    #
-    # def paginate_files_to_context(self, files, context):
-    #     paginator = Paginator(files, 3, 0)
-    #     page_number = self.request.GET.get('page', 1)
-    #     page = paginator.get_page(page_number)
-    #     context['paginator'] = paginator
-    #     context['page_obj'] = page
-    #     context['files'] = page.object_list
-    #     context['is_paginated'] = page.has_other_pages()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        history = set(context['user_obj'].announcement.filter(status='completed') |
+                      context['user_obj'].clients.filter(status='completed'))
+        history = sorted(history, key=lambda O: O.departure_time, reverse=True)
+        context['history'] = history
+        return context
+
 
 class UserUpdateView(UpdateView):
     model = User

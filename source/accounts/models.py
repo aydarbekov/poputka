@@ -23,7 +23,7 @@ class Profiles(models.Model):
     car_number = models.CharField(max_length=50, null=True, blank=True, verbose_name='Номер авто')
     car_seats = models.IntegerField(null=True, blank=True, verbose_name='Количество мест')
     notification = models.BooleanField(default=True, verbose_name='Уведомления')
-    photo = models.ImageField(upload_to='uploads', null=True, blank=True, verbose_name='Фото')
+    photo = models.ImageField(upload_to='users_photo', null=True, blank=True, verbose_name='Фото')
 
     def __str__(self):
         return self.user.first_name

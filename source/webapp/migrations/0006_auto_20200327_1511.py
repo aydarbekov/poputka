@@ -9,13 +9,4 @@ class Migration(migrations.Migration):
         ('webapp', '0005_auto_20200327_1400'),
     ]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='announcements',
-            name='car_model',
-        ),
-        migrations.RemoveField(
-            model_name='announcements',
-            name='car_number',
-        ),
-    ]
+
