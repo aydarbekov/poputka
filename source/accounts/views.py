@@ -50,8 +50,8 @@ class UserDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        history = set(context['user_obj'].announcement.filter(status='completed') |
-                      context['user_obj'].clients.filter(status='completed'))
+        history = set(context['user_obj'].announcement.all() |
+                      context['user_obj'].clients.all())
         history = sorted(history, key=lambda O: O.departure_time, reverse=True)
         context['history'] = history
         return context

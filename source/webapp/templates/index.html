@@ -23,6 +23,12 @@
 {#              <a href="{% url 'webapp:image_add' ann.pk %}" class="btn btn-primary">Добавить фото</a>#}
               <a href="{% url 'webapp:announce_detail' announcement.pk%}" class="btn btn-success">Посмотреть</a>
 {#              <a href="{% url 'webapp:announce_update' ad.pk%}" class="btn btn-warning">Редактировать</a>#}
+                {% if user not in announcement.clients.all and user.is_authenticated and user != announcement.author and announcement.status == 'active' and announcement.seats > 0 %}
+                    <a href="{% url 'webapp:client_add' announcement.pk %}">Присоединиться</a>
+                {% elif user in announcement.clients.all %}
+                    <a href="{% url 'webapp:client_delete' announcement.pk %}">Отказаться</a>
+                {% endif %}
+
 {#              {% if request.user.is_authenticated %}#}
 {#                    {% include 'partial/favorites_buttons.html' %}#}
 {#                {% endif %}#}
