@@ -36,15 +36,15 @@
             {% for announcement in announcements %}
                 <div class="card my-3">
                     <div class="row no-gutters">
-                        <div class="card-img col-md-4">
+                        <div class="card-img col-md-2">
                             {% if announcement.author.profile.photo %}
                                 <img src="{{ announcement.author.profile.photo.url }}" class="card-img"
                                      alt="Author photo">
                             {% else %}
-                                <img src="{% static 'default_image.JPG' %}" class="card-img" alt="No photo">
+                                <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
                             {% endif %}
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                             <div class="card-body">
                                 <h5 class="card-title">{{ announcement.author.first_name }}</h5>
                                 <p class="card-text">
@@ -55,6 +55,14 @@
                                 {% if announcement.price %}
                                     <p class="card-text">{{ announcement.price }} сом</p>
                                 {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card-body">
+                                <p class="card-text">
+                                </p>
+                                <p class="card-text">
+                                </p>
                                 <p><i class="fas fa-phone phone wow bounceIn"></i></p>
                             </div>
                         </div>

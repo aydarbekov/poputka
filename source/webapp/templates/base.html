@@ -30,7 +30,7 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="{% url 'webapp:index' %}">Главная</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="#">Добавить объявление</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'webapp:announce_create' %}">Добавить объявление</a></li>
                     {#                    <li class="nav-item active"><a class="nav-link" href="#"></a></li>#}
                     {#                    <li class="nav-item active"><a class="nav-link" href="#"></a></li>#}
 
@@ -52,8 +52,6 @@
         </nav>
     </div>
     {% block car %}{% endblock %}
-
-    {#    <div class="rightconcave"></div>#}
 </header>
 <div class="container">
     {% block content %}{% endblock %}

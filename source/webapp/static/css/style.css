@@ -73,9 +73,9 @@ h1{
 }
 .card-img{
     border-radius: 15px;
-	height: 100%;
-    width: 15vmax;
-    object-fit: cover;
+	height: 150px;
+    width: 150px;
+    /*object-fit: cover;*/
 }
 .phone{
 	background-color:  #5bbc2e;
@@ -88,7 +88,9 @@ h1{
     font-style: italic;
 	margin: 0;
 }
-
+.card-body p{
+	margin: 0;
+}
 #calendar2 {
   width: 100%;
   font: monospace;
@@ -123,4 +125,13 @@ h1{
 	display: inline-block;
 	border-radius: 20px;
 	width: 9vw;
+}
+.user_links{
+	background-color: #C60054;
+	color: white;
+	display: inline-block;
+	border-radius: 20px;
+	width: 9vw;
+	text-align: center;
+	margin-left: 15px;
 }

@@ -1,61 +1,85 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 {% block title %}{{ user_obj.username }}{% endblock %}
 {% block extra_class %} header {% endblock %}
-{% block menu %}
-{#    {% if user_obj == request.user %}#}
-        <li><a href="{% url 'accounts:user_update' user_obj.pk %}">Edit profile</a></li>
-        <li><a href="{% url 'accounts:user_delete' user_obj.pk %}">Delete profile</a></li>
-
-{#        <li><a href="{% url 'accounts:user_change_password' user_obj.pk %}">Change password</a></li>#}
-{#    {% endif %}#}
-{% endblock %}
 {% block content %}
-    {% if  user_obj.profile.photo %}
-        <img src="{{ user_obj.profile.photo.url }}" style="width: 300px; height: 300px" class="user_photo">
-    {% endif %}
-    <h1>Профиль: {{ user_obj.username }}</h1>
-    <p>Имя: <b>{{ user_obj.first_name }}</b></p>
-    <p>Фамилия: {{ user_obj.last_name }}</p>
-    <p>Почта: {{ user_obj.email }}</p>
-    <p>Тип: {{ user_obj.profile.type }}</p>
-    <p>Телефон: {{ user_obj.profile.mobile_phone }}</p>
-    <p>Страна: {{ user_obj.profile.country }}</p>
-    <p>Город: {{ user_obj.profile.city }}</p>
-    <p>Уведомления: {{ user_obj.profile.notification }}</p>
-    {% if user_obj.profile.type == 'driver' %}
-        <p>Статус: {{ user_obj.profile.status }}</p>
-        <p>Модель авто: {{ user_obj.profile.car_model }}</p>
-        <p>Номер авто: {{ user_obj.profile.car_number }}</p>
-        <p>Кол-во сидений: {{ user_obj.profile.car_seats }}</p>
-    {% endif %}
-
-        <h2>История поездок</h2>
-        {% for announcement in history %}
-            <div class="card" style="width: 18rem;">
-            {% if  announcement.image.all.first.photos.url %}
-                <img src="{{ ad.image.all.first.photos.url }}" class="card-img-top" alt="...">
-            {% else %}
-                <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">
-            {% endif %}
-          <div class="card-body">
-            <h5 class="card-title">Откуда: {{ announcement.place_from }}</h5>
-              <h5 class="card-title">Куда: {{ announcement.place_to }}</h5>
-              <p class="card-text">Описание: {{ announcement.description }}</p>
-            <p class="card-text">Время: {{ announcement.departure_time }}</p>
-              <p class="card-text">Места: {{ announcement.seats }}</p>
-              <p class="card-text">Багаж: {{ announcement.luggage }}</p>
-              <p class="card-text">Автор:  <a href="{% url 'accounts:user_detail' announcement.author.pk %}">{{ announcement.author}}</a></p>
-{#              <tr data-href="{% url 'accounts:user_detail' use.pk %}">#}
-{#            <a href="#" class="btn btn-primary">Go somewhere</a>#}
-{#              <a href="{% url 'webapp:image_add' ann.pk %}" class="btn btn-primary">Добавить фото</a>#}
-              <a href="{% url 'webapp:announce_detail' announcement.pk%}" class="btn btn-success">Посмотреть</a>
-{#              <a href="{% url 'webapp:announce_update' ad.pk%}" class="btn btn-warning">Редактировать</a>#}
-{#              {% if request.user.is_authenticated %}#}
-{#                    {% include 'partial/favorites_buttons.html' %}#}
-{#                {% endif %}#}
+    <div class="card my-3">
+        <div class="row no-gutters">
+            <div class="card-img col-md-2">
+                {% if user_obj.profile.photo %}
+                    <img src="{{ user_obj.profile.photo.url }}" class="card-img"
+                         alt="Author photo">
+                {% else %}
+                    <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
+                {% endif %}
+                <p class="mt-2 ml-3" style="color: #5bbc2e">Профиль: {{ user_obj.username }}</p>
+            </div>
+            <div class="col-md-5">
+                <div class="card-body">
+                    <p>Имя: <b>{{ user_obj.first_name }}</b></p>
+                    <p>Фамилия: {{ user_obj.last_name }}</p>
+                    <p>Страна: {{ user_obj.profile.country }}</p>
+                    <p>Город: {{ user_obj.profile.city }}</p>
+                    <p>Почта: {{ user_obj.email }}</p>
+                    <p>Телефон: {{ user_obj.profile.mobile_phone }}</p>
                 </div>
             </div>
-        {% empty %}
-            <p>Пока нет поездок</p>
-        {% endfor %}
+            <div class="col-md-5">
+                <div class="card-body">
+                    <p>Тип: {{ user_obj.profile.type }}</p>
+                    <p>Уведомления: {{ user_obj.profile.notification }}</p>
+                    {% if user_obj.profile.type == 'driver' %}
+                        <p>Статус: {{ user_obj.profile.status }}</p>
+                        <p>Модель авто: {{ user_obj.profile.car_model }}</p>
+                        <p>Номер авто: {{ user_obj.profile.car_number }}</p>
+                        <p>Кол-во сидений: {{ user_obj.profile.car_seats }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        {% if user_obj == request.user %}
+            <a href="{% url 'accounts:user_update' user_obj.pk %}" class="user_links">Изменить</a>
+            <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
+        {% endif %}
+    </div>
+
+
+
+
+
+
+
+
+    {#    <h2>История поездок</h2>#}
+    {#    {% for announcement in history %}#}
+    {#        <div class="card" style="width: 18rem;">#}
+    {#            {% if  announcement.image.all.first.photos.url %}#}
+    {#                <img src="{{ ad.image.all.first.photos.url }}" class="card-img-top" alt="...">#}
+    {#            {% else %}#}
+    {#                <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">#}
+    {#            {% endif %}#}
+    {#            <div class="card-body">#}
+    {#                <h5 class="card-title">Откуда: {{ announcement.place_from }}</h5>#}
+    {#                <h5 class="card-title">Куда: {{ announcement.place_to }}</h5>#}
+    {#                <p class="card-text">Описание: {{ announcement.description }}</p>#}
+    {#                <p class="card-text">Время: {{ announcement.departure_time }}</p>#}
+    {#                <p class="card-text">Места: {{ announcement.seats }}</p>#}
+    {#                <p class="card-text">Багаж: {{ announcement.luggage }}</p>#}
+    {#                <p class="card-text">Автор: <a#}
+    {#                        href="{% url 'accounts:user_detail' announcement.author.pk %}">{{ announcement.author }}</a></p>#}
+    {#              <tr data-href="{% url 'accounts:user_detail' use.pk %}">#}
+    {#            <a href="#" class="btn btn-primary">Go somewhere</a>#}
+    {#              <a href="{% url 'webapp:image_add' ann.pk %}" class="btn btn-primary">Добавить фото</a>#}
+    {#                <a href="{% url 'webapp:announce_detail' announcement.pk %}" class="btn btn-success">Посмотреть</a>#}
+    {#              <a href="{% url 'webapp:announce_update' ad.pk%}" class="btn btn-warning">Редактировать</a>#}
+    {#              {% if request.user.is_authenticated %}#}
+    {#                    {% include 'partial/favorites_buttons.html' %}#}
+    {#                {% endif %}#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    {% empty %}#}
+    {#        <p>Пока нет поездок</p>#}
+    {#    {% endfor %}#}
 {% endblock %}
