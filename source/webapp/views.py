@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES
+from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES
 
 
 class PassengersList(ListView):
@@ -30,6 +30,11 @@ class IndexView(ListView):
     model = Announcements
     template_name = 'index.html'
     context_object_name = 'announcements'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['regions'] = REGION_CHOICES
+        return context
 
     # def get_queryset(self, *args, **kwargs):
     #         return Announcements.objects.filter(user__profile__driver__status='free')

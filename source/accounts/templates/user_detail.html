@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}{{ user_obj.username }}{% endblock %}
+{% block extra_class %} header {% endblock %}
 {% block menu %}
 {#    {% if user_obj == request.user %}#}
 {#        <li><a href="{% url 'accounts:user_update' user_obj.pk %}">Edit profile</a></li>#}

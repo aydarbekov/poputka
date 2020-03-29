@@ -39,4 +39,4 @@ class Announcements(models.Model):
     status = models.CharField(max_length=50, choices=ANNOUNCEMENT_STATUS_CHOICES, verbose_name='Статус')
 
     def __str__(self):
-        return self.description
+        return str(self.author)
