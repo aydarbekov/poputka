@@ -3,7 +3,7 @@
 {% block title %}{{ user_obj.username }}{% endblock %}
 {% block extra_class %} header {% endblock %}
 {% block content %}
-    <div class="card my-3">
+    <div class="card my-3" style="border-color: #C60054">
         <div class="row no-gutters">
             <div class="card-img col-md-2">
                 {% if user_obj.profile.photo %}
@@ -12,7 +12,7 @@
                 {% else %}
                     <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
                 {% endif %}
-                <p class="mt-2 ml-3" style="color: #5bbc2e">Профиль: {{ user_obj.username }}</p>
+                <p class="mt-2 ml-3" style="color: #C60054">Профиль: {{ user_obj.username }}</p>
             </div>
             <div class="col-md-5">
                 <div class="card-body">
@@ -45,41 +45,56 @@
         {% endif %}
     </div>
 
+    <h4>История поездок</h4>
+    {% for announcement in history %}
+        <div class="card my-3">
+            <div class="row no-gutters card-body">
+                <div class="card-img col-md-2">
+                            {% if announcement.author.profile.photo %}
+                                <img src="{{ announcement.author.profile.photo.url }}" class="card-img"
+                                     alt="Author photo">
+                            {% else %}
+                                <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
+                            {% endif %}
+                        </div>
+                <div class="col-md-5">
+                    <p class="card-text">
+                        <b>Направление</b> {{ announcement.get_place_from_display }}-{{ announcement.get_place_to_display }}
+                    </p>
+                    <p class="card-text">
+                        <b>Время:</b> {{ announcement.departure_time|date:'d-m-y   - H:m' }}</p>
+                </div>
+                <div class="col-md-5">
 
-
-
-
-
-
-
-    {#    <h2>История поездок</h2>#}
-    {#    {% for announcement in history %}#}
-    {#        <div class="card" style="width: 18rem;">#}
-    {#            {% if  announcement.image.all.first.photos.url %}#}
-    {#                <img src="{{ ad.image.all.first.photos.url }}" class="card-img-top" alt="...">#}
-    {#            {% else %}#}
-    {#                <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">#}
-    {#            {% endif %}#}
-    {#            <div class="card-body">#}
-    {#                <h5 class="card-title">Откуда: {{ announcement.place_from }}</h5>#}
-    {#                <h5 class="card-title">Куда: {{ announcement.place_to }}</h5>#}
-    {#                <p class="card-text">Описание: {{ announcement.description }}</p>#}
-    {#                <p class="card-text">Время: {{ announcement.departure_time }}</p>#}
-    {#                <p class="card-text">Места: {{ announcement.seats }}</p>#}
-    {#                <p class="card-text">Багаж: {{ announcement.luggage }}</p>#}
-    {#                <p class="card-text">Автор: <a#}
-    {#                        href="{% url 'accounts:user_detail' announcement.author.pk %}">{{ announcement.author }}</a></p>#}
-    {#              <tr data-href="{% url 'accounts:user_detail' use.pk %}">#}
-    {#            <a href="#" class="btn btn-primary">Go somewhere</a>#}
-    {#              <a href="{% url 'webapp:image_add' ann.pk %}" class="btn btn-primary">Добавить фото</a>#}
-    {#                <a href="{% url 'webapp:announce_detail' announcement.pk %}" class="btn btn-success">Посмотреть</a>#}
-    {#              <a href="{% url 'webapp:announce_update' ad.pk%}" class="btn btn-warning">Редактировать</a>#}
-    {#              {% if request.user.is_authenticated %}#}
-    {#                    {% include 'partial/favorites_buttons.html' %}#}
-    {#                {% endif %}#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    {% empty %}#}
-    {#        <p>Пока нет поездок</p>#}
-    {#    {% endfor %}#}
+                </div>
+            </div>
+        </div>
+{#        <div class="card" style="width: 18rem;">#}
+{#            {% if  announcement.image.all.first.photos.url %}#}
+{#                <img src="{{ ad.image.all.first.photos.url }}" class="card-img-top" alt="...">#}
+{#            {% else %}#}
+{#                <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">#}
+{#            {% endif %}#}
+{#            <div class="card-body">#}
+{#                <h5 class="card-title">Откуда: {{ announcement.place_from }}</h5>#}
+{#                <h5 class="card-title">Куда: {{ announcement.place_to }}</h5>#}
+{#                <p class="card-text">Описание: {{ announcement.description }}</p>#}
+{#                <p class="card-text">Время: {{ announcement.departure_time }}</p>#}
+{#                <p class="card-text">Места: {{ announcement.seats }}</p>#}
+{#                <p class="card-text">Багаж: {{ announcement.luggage }}</p>#}
+{#                <p class="card-text">Автор: <a#}
+{#                        href="{% url 'accounts:user_detail' announcement.author.pk %}">{{ announcement.author }}</a></p>#}
+                {#                <tr data-href="{% url 'accounts:user_detail' use.pk %}">#}
+                {#                    <a href="#" class="btn btn-primary">Go somewhere</a>#}
+                {#                    <a href="{% url 'webapp:image_add' ann.pk %}" class="btn btn-primary">Добавить фото</a>#}
+                {#                    <a href="{% url 'webapp:announce_detail' announcement.pk %}" class="btn btn-success">Посмотреть</a>#}
+                {#                    <a href="{% url 'webapp:announce_update' ad.pk %}" class="btn btn-warning">Редактировать</a>#}
+                {#                    {% if request.user.is_authenticated %}#}
+                {#                        {% include 'partial/favorites_buttons.html' %}#}
+                {#                    {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+    {% empty %}
+        <p>Пока нет поездок</p>
+    {% endfor %}
 {% endblock %}

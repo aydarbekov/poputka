@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta
-from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
-from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, ANNOUNCEMENT_STATUS_CHOICES
-from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES
+from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES
 
 
 class PassengersList(ListView):
@@ -37,6 +35,7 @@ class IndexView(ListView):
 
     # def get_queryset(self, *args, **kwargs):
     #         return Announcements.objects.filter(user__profile__driver__status='free')
+
     # def change_status(self, *args, **kwargs):
     #     for announcement in Announcements.objects.all():
     #         timezone = announcement.departure_time.tzinfo
@@ -100,7 +99,7 @@ class AnnounceCreateView(CreateView):
         return reverse('webapp:index')
 
 
-class AnnounceDetailView(DeleteView):
+class AnnounceDetailView(DetailView):
     model = Announcements
     template_name = 'announce_detail.html'
     context_object_name = 'announce'
