@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES
+from django.views.generic.base import View
 
 
 class PassengersList(ListView):
@@ -122,3 +124,24 @@ class AnnounceDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse('webapp:index')
+
+
+class ClientAddView(View):
+    def get(self, *args, **kwargs):
+        Announce = Announcements.objects.get(id=kwargs['pk'])
+        Announce.clients.add(self.request.user)
+        Announce.seats -= 1
+        if Announce.seats == 0:
+            Announce.status = 'completed'
+        Announce.save()
+        return redirect('webapp:index')
+
+class ClientDeleteView(View):
+    def get(self, *args, **kwargs):
+        Announce = Announcements.objects.get(id=kwargs['pk'])
+        Announce.clients.remove(self.request.user)
+        Announce.seats += 1
+        if Announce.seats == 1:
+            Announce.status = 'active'
+        Announce.save()
+        return redirect('webapp:index')
