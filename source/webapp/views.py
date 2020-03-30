@@ -124,6 +124,8 @@ class ClientAddView(View):
         Announce = Announcements.objects.get(id=kwargs['pk'])
         Announce.clients.add(self.request.user)
         Announce.seats -= 1
+        if Announce.seats == 0:
+            Announce.status = 'completed'
         Announce.save()
         return redirect('webapp:index')
 
@@ -132,5 +134,7 @@ class ClientDeleteView(View):
         Announce = Announcements.objects.get(id=kwargs['pk'])
         Announce.clients.remove(self.request.user)
         Announce.seats += 1
+        if Announce.seats == 1:
+            Announce.status = 'active'
         Announce.save()
         return redirect('webapp:index')

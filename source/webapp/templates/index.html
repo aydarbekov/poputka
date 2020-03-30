@@ -1,43 +1,35 @@
 {% extends 'base.html' %}
-
 {% block content %}
     <section>
         <h1>Объявления:</h1>
         {% for announcement in announcements %}
             <div class="card" style="width: 18rem;">
-            {% if  announcement.photo %}
-                <img src="{{ announcement.photo.url }}" class="card-img-top" alt="...">
-            {% else %}
-                <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">
-            {% endif %}
-          <div class="card-body">
-            <h5 class="card-title">Откуда: {{ announcement.place_from }}</h5>
-              <h5 class="card-title">Куда: {{ announcement.place_to }}</h5>
-              <p class="card-text">Описание: {{ announcement.description }}</p>
-            <p class="card-text">Время: {{ announcement.departure_time }}</p>
-              <p class="card-text">Места: {{ announcement.seats }}</p>
-              <p class="card-text">Багаж: {{ announcement.luggage }}</p>
-              <p class="card-text">Автор:  <a href="{% url 'accounts:user_detail' announcement.author.pk %}">{{ announcement.author}}</a></p>
-{#              <tr data-href="{% url 'accounts:user_detail' use.pk %}">#}
-{#            <a href="#" class="btn btn-primary">Go somewhere</a>#}
-{#              <a href="{% url 'webapp:image_add' ann.pk %}" class="btn btn-primary">Добавить фото</a>#}
-              <a href="{% url 'webapp:announce_detail' announcement.pk%}" class="btn btn-success">Посмотреть</a>
-{#              <a href="{% url 'webapp:announce_update' ad.pk%}" class="btn btn-warning">Редактировать</a>#}
-                {% if user not in announcement.clients.all and user.is_authenticated and user != announcement.author and announcement.status == 'active' and announcement.seats > 0 %}
-                    <a href="{% url 'webapp:client_add' announcement.pk %}">Присоединиться</a>
-                {% elif user in announcement.clients.all %}
-                    <a href="{% url 'webapp:client_delete' announcement.pk %}">Отказаться</a>
+                {% if  announcement.photo %}
+                    <img src="{{ announcement.photo.url }}" class="card-img-top" alt="...">
+                {% else %}
+                    <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">
                 {% endif %}
-
-{#              {% if request.user.is_authenticated %}#}
-{#                    {% include 'partial/favorites_buttons.html' %}#}
-{#                {% endif %}#}
-          </div>
-</div>
-    {% endfor %}
+                <div class="card-body">
+                    <h5 class="card-title">Откуда: {{ announcement.place_from }}</h5>
+                    <h5 class="card-title">Куда: {{ announcement.place_to }}</h5>
+                    <p class="card-text">Описание: {{ announcement.description }}</p>
+                    <p class="card-text">Время: {{ announcement.departure_time }}</p>
+                    <p class="card-text">Места: {{ announcement.seats }}</p>
+                    <p class="card-text">Багаж: {{ announcement.luggage }}</p>
+                    <p class="card-text">Автор:  <a href="{% url 'accounts:user_detail' announcement.author.pk %}">{{ announcement.author}}</a></p>
+                    <a href="{% url 'webapp:announce_detail' announcement.pk%}" class="btn btn-success">Посмотреть</a>
+    {#              <a href="{% url 'webapp:announce_update' ad.pk%}" class="btn btn-warning">Редактировать</a>#}
+                    {% if user not in announcement.clients.all and user.is_authenticated and user != announcement.author and announcement.status == 'active' and announcement.seats > 0 %}
+                        <a href="{% url 'webapp:client_add' announcement.pk %}">Присоединиться</a>
+                    {% elif user in announcement.clients.all %}
+                        <a href="{% url 'webapp:client_delete' announcement.pk %}">Отказаться</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
     </section>
     <section>
-            </p>
-            <hr/>
+        </p>
+        <hr/>
     </section>
 {% endblock %}

@@ -2,20 +2,32 @@
 {% load staticfiles %}
 {%  block content %}
     <div class="card" style="width: 18rem;">
-    {% if  announce.photo %}
-        <img src="{{ announce.photo.url }}" class="card-img-top" alt="...">
+        {% if  announce.photo %}
+            <img src="{{ announce.photo.url }}" class="card-img-top" alt="...">
         {% else %}
-        <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">
+            <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">
         {% endif %}
-  <div class="card-body">
-    <h5 class="card-title">Направление: {{ announce.direction }}</h5>
-    <p class="card-text">Время: {{ announce.time }}</p>
-      <p class="card-text">Места: {{ announce.seats }}</p>
-      <p class="card-text">Багаж: {{ announce.luggage }}</p>
-      <p class="card-text">Автор:  <a href="{% url 'accounts:user_detail' announce.author.pk %}">{{ announce.author}}</a></p>
-      <a href="{% url 'webapp:announce_update' announce.pk%}" class="btn btn-warning">Редактировать</a>
-      <a href="{% url 'webapp:announce_delete' announce.pk %}" class="btn btn-danger">Удалить</a>
-  </div>
-</div>
+        <div class="card-body">
+            <h5 class="card-title">Направление: {{ announce.direction }}</h5>
+            <p class="card-text">Время: {{ announce.time }}</p>
+            <p class="card-text">Места: {{ announce.seats }}</p>
+            <p class="card-text">Багаж: {{ announce.luggage }}</p>
+            <p class="card-text">Автор:  <a href="{% url 'accounts:user_detail' announce.author.pk %}">{{ announce.author}}</a></p>
+            <a href="{% url 'webapp:announce_update' announce.pk%}" class="btn btn-warning">Редактировать</a>
+            <a href="{% url 'webapp:announce_delete' announce.pk %}" class="btn btn-danger">Удалить</a>
+            {% if user not in announce.clients.all and user.is_authenticated and user != announce.author and announce.status == 'active' and announce.seats > 0 %}
+                <a href="{% url 'webapp:client_add' announce.pk %}">Присоединиться</a>
+            {% elif user in announce.clients.all %}
+                <a href="{% url 'webapp:client_delete' announce.pk %}">Отказаться</a>
+            {% endif %}
+            {% if user == announce.author %}
+                <p class="card-text">Клиенты:
+                    {% for client in announce.clients.all %}
+                        <a href="{% url 'accounts:user_detail' client.pk %}">{{ client }}</a>
+                    {% endfor %}
+                </p>
+            {% endif %}
+        </div>
+    </div>
     <script src="{% static 'js/main.js' %}"></script>
 {% endblock %}
