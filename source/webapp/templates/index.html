@@ -62,6 +62,14 @@
                                     <p class="card-text">{{ announcement.price }} сом</p>
                                 {% endif %}
                             </div>
+                                <div class="row justify-content-center">
+                                    {% if user not in announcement.clients.all and user.is_authenticated and user != announcement.author and announcement.status == 'active' and announcement.seats > 0 %}
+                                        <a href="{% url 'webapp:client_add' announcement.pk %}" class="user_links">Присоединиться</a>
+                                    {% elif user in announcement.clients.all %}
+                                        <a href="{% url 'webapp:client_delete' announcement.pk %}" class="user_links">Отказаться</a>
+                                    {% endif %}
+                                </div>
+
                         </div>
                         <div class="col-md-4">
                             <div class="card-body">
