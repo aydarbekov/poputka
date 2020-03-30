@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load widget_tweaks %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -30,7 +31,9 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="{% url 'webapp:index' %}">Главная</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'webapp:announce_create' %}">Добавить объявление</a></li>
+                    {% if request.user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'webapp:announce_create' %}">Добавить объявление</a></li>
+                    {% endif %}
                     {#                    <li class="nav-item active"><a class="nav-link" href="#"></a></li>#}
                     {#                    <li class="nav-item active"><a class="nav-link" href="#"></a></li>#}
 
@@ -43,7 +46,7 @@
                         </li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'accounts:logout' %}">Выйти</a></li>
                     {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Войти</a></li>
+                        <li class="nav-item" data-toggle="modal" data-target="#UserModal"><a class="nav-link" href="{% url 'accounts:login' %}">Войти</a></li>
                         <li class="nav-item"><a class="nav-link"
                                                 href="{% url 'accounts:create' %}">Зарегистрироваться</a></li>
                     {% endif %}
@@ -71,4 +74,26 @@
 <script>new WOW().init();</script>
 {% block scripts %}{% endblock %}
 </body>
+    <div class="modal fade" id="UserModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{% url 'accounts:login' %}?next={{ next }}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                {% if form.non_field_errors %}
+                    <p class="text-danger">Неверное имя пользователя или пароль.</p>
+                {% endif %}
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Имя пользователя:</label>
+                    {{ form.username|add_class:"form-control" }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Пароль:</label>
+                    {{ form.password|add_class:"form-control" }}
+                </div>
+                <button type="submit" class="ml-1 mb-4 mt-3 btn btn-success">Войти</button>
+            </form>
+        </div>
+    </div>
+</div>
 </html>

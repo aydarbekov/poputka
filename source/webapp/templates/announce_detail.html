@@ -1,21 +1,49 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{%  block content %}
-    <div class="card" style="width: 18rem;">
-    {% if  announce.photo.url %}
-        <img src="{{ announce.photo.url }}" class="card-img-top" alt="...">
-        {% else %}
-        <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">
+{% block extra_class %} header {% endblock %}
+{% block content %}
+    <div class="card my-3">
+        <div class="row no-gutters">
+            <div class="card-img col-md-2">
+                {% if announce.author.profile.photo %}
+                    <img src="{{ announce.author.profile.photo.url }}" class="card-img"
+                         alt="Author photo">
+                {% else %}
+                    <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
+                {% endif %}
+            </div>
+            <div class="col-md-5">
+                <div class="card-body">
+                    <h5 class="card-title">{{ announce.author.first_name }}</h5>
+                    <p class="card-text">
+                        <b>Направление</b> {{ announce.get_place_from_display }}-{{ announce.get_place_to_display }}
+                    </p>
+                    <p class="card-text">
+                        <b>Время:</b> {{ announce.departure_time|date:'d-m-y   - H:m' }}</p>
+                    {% if announce.price %}
+                        <p class="card-text">{{ announce.price }} сом</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="card-body">
+                    <p>Тип: {{ announce.author.profile.type }}</p>
+                    {% if announce.author.profile.type == 'driver' %}
+                        <p>Статус: {{ announce.author.profile.status }}</p>
+                        <p>Модель авто: {{ announce.author.profile.car_model }}</p>
+                        <p>Номер авто: {{ announce.author.profile.car_number }}</p>
+                        <p>Кол-во сидений: {{ announce.author.profile.car_seats }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        {% if announce.author == request.user %}
+            <a href="{% url 'webapp:announce_update' announce.pk %}" class="user_links">Изменить</a>
+            <a href="{% url 'webapp:announce_delete' announce.pk %}" class="user_links">Удалить</a>
         {% endif %}
-  <div class="card-body">
-    <h5 class="card-title">Направление: {{ announce.direction }}</h5>
-    <p class="card-text">Время: {{ announce.time }}</p>
-      <p class="card-text">Места: {{ announce.seats }}</p>
-      <p class="card-text">Багаж: {{ announce.luggage }}</p>
-      <p class="card-text">Автор:  <a href="{% url 'accounts:user_detail' announce.author.pk %}">{{ announce.author}}</a></p>
-      <a href="{% url 'webapp:announce_update' announce.pk%}" class="btn btn-warning">Редактировать</a>
-      <a href="{% url 'webapp:announce_delete' announce.pk %}" class="btn btn-danger">Удалить</a>
-  </div>
-</div>
-    <script src="{% static 'js/main.js' %}"></script>
+    </div>
 {% endblock %}
+
+

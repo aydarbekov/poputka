@@ -36,26 +36,26 @@ class IndexView(ListView):
     # def get_queryset(self, *args, **kwargs):
     #         return Announcements.objects.filter(user__profile__driver__status='free')
 
-    # def change_status(self, *args, **kwargs):
-    #     for announcement in Announcements.objects.all():
-    #         timezone = announcement.departure_time.tzinfo
-    #         # print("Departure", announcement.departure_time)
-    #         time_now = datetime.now(timezone)
-    #         time_end = time_now + timedelta(hours=1)
-    #         # print("END", time_end)
-    #         if announcement.departure_time <= time_end:
-    #             # print("Даааа")
-    #             # print(announcement.status)
-    #             announcement.status = ANNOUNCEMENT_STATUS_CHOICES[1][0]
-    #             announcement.save()
-    #             # print(announcement.status)
-    #
-    # def get(self, request, *args, **kwargs):
-    #     self.change_status()
-    #     return super(IndexView, self).get(request, *args, **kwargs)
-    #
-    # def get_queryset(self, *args, **kwargs):
-    #     return Announcements.objects.filter(status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
+    def change_status(self, *args, **kwargs):
+        for announcement in Announcements.objects.all():
+            timezone = announcement.departure_time.tzinfo
+            # print("Departure", announcement.departure_time)
+            time_now = datetime.now(timezone)
+            time_end = time_now + timedelta(hours=1)
+            # print("END", time_end)
+            if announcement.departure_time <= time_end:
+                # print("Даааа")
+                # print(announcement.status)
+                announcement.status = ANNOUNCEMENT_STATUS_CHOICES[1][0]
+                announcement.save()
+                # print(announcement.status)
+
+    def get(self, request, *args, **kwargs):
+        self.change_status()
+        return super(IndexView, self).get(request, *args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        return Announcements.objects.filter(status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
 
 
 class AnnounceCreateView(CreateView):
@@ -103,8 +103,8 @@ class AnnounceDetailView(DetailView):
     model = Announcements
     template_name = 'announce_detail.html'
     context_object_name = 'announce'
-#
-#
+
+
 class AnnounceUpdateView(UpdateView):
     model = Announcements
     template_name = 'change.html'

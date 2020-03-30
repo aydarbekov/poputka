@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
     <div class="row justify-content-between">
-        <div class="col-2 my-5">
+        <div class="col-2" style="margin-top: 100px">
             <h5 class="text-center" style="color: rgb(242 0 0)">Календарь</h5>
             <table id="calendar2">
                 <thead>
@@ -26,6 +26,11 @@
                     <td>Вс
                 <tbody>
             </table>
+            <a href="http://www.inform.kg/" target="_blank"><img src="http://www.inform.kg/informers/currency3.php"
+                                                                 width="100%" height="150" border="0"
+                                                                 alt="Курсы валют Кыргызстана по отношению к сому"
+                                                                 title="Курсы валют Кыргызстана по отношению к сому"
+                                                                 style="margin-top: 30px"></a>
         </div>
         <div class="col-10">
             <div class="row justify-content-between">
@@ -34,6 +39,7 @@
                 {% endfor %}
             </div>
             {% for announcement in announcements %}
+                <a href="{% url 'webapp:announce_detail' announcement.pk %}">
                 <div class="card my-3">
                     <div class="row no-gutters">
                         <div class="card-img col-md-2">
@@ -63,11 +69,15 @@
                                 </p>
                                 <p class="card-text">
                                 </p>
-                                <p><i class="fas fa-phone phone wow bounceIn"></i></p>
+{#                                <p class="phone"><i class="fas fa-phone"></i></p>#}
+                                <div class="phone">
+                                    <span><i class="fas fa-phone"></i></span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                </a>
             {% endfor %}
         </div>
     </div>
