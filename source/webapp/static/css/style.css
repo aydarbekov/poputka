@@ -15,6 +15,8 @@ h1, h4 {
 a{
     text-decoration: none;
     color: black;
+    margin: 0;
+    padding: 0;
 }
 a:hover{
     text-decoration: none;

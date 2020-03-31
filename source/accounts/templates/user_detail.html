@@ -78,9 +78,9 @@
             <a href="{% url 'webapp:announce_update' announcement.pk %}" class="announce_links">Редактировать</a>
             <a href="{% url 'webapp:announce_delete' announcement.pk %}" class="announce_links">Удалить</a>
             {% if user not in announcement.clients.all and user.is_authenticated and user != announcement.author and announcement.status == 'active' and announcement.seats > 0 %}
-                <a href="{% url 'webapp:client_add' announcement.pk %}" class="user_links">Присоединиться</a>
+                <a href="{% url 'webapp:client_add' announcement.pk %}" class="user_links">Бронь</a>
             {% elif user in announcement.clients.all %}
-                <a href="{% url 'webapp:client_delete' announcement.pk %} " class="user_links">Отказаться</a>
+                <a href="{% url 'webapp:client_delete' announcement.pk %} " class="user_links">Отказ</a>
             {% endif %}
         </div>
     {% empty %}
