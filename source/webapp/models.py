@@ -35,8 +35,14 @@ class Announcements(models.Model):
     # car_number = models.CharField(max_length=50, null=True, blank=True, verbose_name='Номер авто')
     price = models.IntegerField(null=True, blank=True, verbose_name='Цена')
     photo = models.ImageField(upload_to='ads_photo', null=True, blank=True, verbose_name='Фото')
-    clients = models.ManyToManyField('auth.User', null=True, blank=True, related_name='clients', verbose_name='Клиенты')
     status = models.CharField(max_length=50, choices=ANNOUNCEMENT_STATUS_CHOICES, verbose_name='Статус')
+    clients = models.ManyToManyField('auth.User', through='ClientsInAnnounce', related_name='clients', verbose_name='Клиенты')
 
     def __str__(self):
         return str(self.author) + f'{self.place_from} - {self.place_to}'
+
+
+class ClientsInAnnounce(models.Model):
+    announcement = models.ForeignKey('Announcements', on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    seats = models.IntegerField()

@@ -52,10 +52,18 @@
             <a href="{% url 'webapp:announce_update' announce.pk %}" class="user_links">Изменить</a>
             <a href="{% url 'webapp:announce_delete' announce.pk %}" class="user_links">Удалить</a>
         {% endif %}
-        {% if user not in announce.clients.all and user.is_authenticated and user != announce.author and announce.status == 'active' and announce.seats > 0 %}
-            <a href="{% url 'webapp:client_add' announce.pk %}" class="user_links">Бронь</a>
-        {% elif user in announce.clients.all %}
-            <a href="{% url 'webapp:client_delete' announce.pk %}" class="user_links">Отказ</a>
-        {% endif %}
+        <div class="bron">
+            {% if user not in announce.clients.all and user.is_authenticated and user != announce.author and announce.status == 'active' and announce.seats > 0 %}
+                <form action="{% url 'webapp:client_add' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="custId" name="announcement_id" value="{{ announce.pk }}">
+                    <label for="quantity">Кол-во:</label>
+                    <input type="number" id="quantity" name="quantity" min="1" max="{{ announce.seats }}" value="1" >
+                    <p class="text-center"><input type="submit" value="Бронь" class="btn user_links btn-success"></p>
+                </form>
+            {% elif user in announcement.clients.all %}
+                <a href="{% url 'webapp:client_delete' announce.pk %}" class="user_links">Отказ</a>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

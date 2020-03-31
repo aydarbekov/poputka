@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES
+from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES, \
+    ClientsInAnnounce
 from django.views.generic.base import View
 
 
@@ -127,33 +128,28 @@ class AnnounceDeleteView(DeleteView):
 
 
 class ClientAddView(View):
-    def get(self, *args, **kwargs):
-        Announce = Announcements.objects.get(id=kwargs['pk'])
-        Announce.clients.add(self.request.user)
-        Announce.seats -= 1
-        if Announce.seats == 0:
-            Announce.status = 'completed'
-        Announce.save()
-        return redirect('webapp:index')
-
     def post(self, *args, **kwargs):
         announcement_id = self.request.POST.get('announcement_id')
         quantity = self.request.POST.get('quantity')
-        Announce = Announcements.objects.get(id=announcement_id)
-        Announce.clients.add(self.request.user)
-        Announce.seats -= int(quantity)
-        if Announce.seats == 0:
-            Announce.status = 'completed'
-        Announce.save()
+        announce = Announcements.objects.get(id=announcement_id)
+        user = self.request.user
+        new = ClientsInAnnounce(announcement=announce, user=user, seats=int(quantity))
+        new.save()
+        announce.seats -= int(quantity)
+        if announce.seats == 0:
+            announce.status = 'completed'
+        announce.save()
         return redirect('webapp:index')
 
 
 class ClientDeleteView(View):
     def get(self, *args, **kwargs):
-        Announce = Announcements.objects.get(id=kwargs['pk'])
-        Announce.clients.remove(self.request.user)
-        Announce.seats += 1
-        if Announce.seats == 1:
-            Announce.status = 'active'
-        Announce.save()
+        announce = Announcements.objects.get(id=kwargs['pk'])
+        user = announce.clients.get(username=self.request.user)
+        clientinannounce = ClientsInAnnounce.objects.get(announcement=announce, user=user)
+        announce.seats += clientinannounce.seats
+        announce.clients.remove(self.request.user)
+        if announce.seats >= 1:
+            announce.status = 'active'
+        announce.save()
         return redirect('webapp:index')
