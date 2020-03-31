@@ -14,7 +14,7 @@ urlpatterns = [
     path('announce/detail/<int:pk>/', AnnounceDetailView.as_view(), name='announce_detail'),
     path('announce/update/<int:pk>/', AnnounceUpdateView.as_view(), name='announce_update'),
     path('announcements/delete/<int:pk>/', AnnounceDeleteView.as_view(), name='announce_delete'),
-    path('client/add/<int:pk>/', ClientAddView.as_view(), name='client_add'),
+    path('client/add/', ClientAddView.as_view(), name='client_add'),
     path('client/delete/<int:pk>/', ClientDeleteView.as_view(), name='client_delete')
 
 ]

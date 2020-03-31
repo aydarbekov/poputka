@@ -136,6 +136,18 @@ class ClientAddView(View):
         Announce.save()
         return redirect('webapp:index')
 
+    def post(self, *args, **kwargs):
+        announcement_id = self.request.POST.get('announcement_id')
+        quantity = self.request.POST.get('quantity')
+        Announce = Announcements.objects.get(id=announcement_id)
+        Announce.clients.add(self.request.user)
+        Announce.seats -= int(quantity)
+        if Announce.seats == 0:
+            Announce.status = 'completed'
+        Announce.save()
+        return redirect('webapp:index')
+
+
 class ClientDeleteView(View):
     def get(self, *args, **kwargs):
         Announce = Announcements.objects.get(id=kwargs['pk'])
