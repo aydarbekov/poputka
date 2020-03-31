@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.http import HttpResponseRedirect
@@ -58,6 +60,9 @@ class IndexView(ListView):
         return super(IndexView, self).get(request, *args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
+        region = self.request.GET.get('region')
+        if region:
+            return Announcements.objects.filter(Q(status=ANNOUNCEMENT_STATUS_CHOICES[0][0]), Q(place_from=region) | Q(place_to=region))
         return Announcements.objects.filter(status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
 
 

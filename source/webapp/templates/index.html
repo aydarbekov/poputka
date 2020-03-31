@@ -35,7 +35,7 @@
         <div class="col-10">
             <div class="row justify-content-between">
                 {% for region in regions %}
-                    <button type="button" class="btn region">{{ region.1 }}</button>
+                    <a class="btn region" href="{% url 'webapp:index' %}?region={{ region.0 }}" >{{ region.1 }}</a>
                 {% endfor %}
             </div>
             {% for announcement in announcements %}
