@@ -12,7 +12,7 @@
                     <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
                 {% endif %}
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <div class="card-body">
                     <h5 class="card-title">{{ announce.author.first_name }}</h5>
                     <p class="card-text">
@@ -25,7 +25,7 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <div class="card-body">
                     <p>Тип: {{ announce.author.profile.type }}</p>
                     {% if announce.author.profile.type == 'driver' %}
@@ -36,6 +36,15 @@
                     {% endif %}
                 </div>
             </div>
+            <div class="col-md-4">
+                {% if user == announce.author %}
+                    <p class="card-text">Клиенты:
+                        {% for client in announce.clients.all %}
+                            <a href="{% url 'accounts:user_detail' client.pk %}">{{ client }}</a>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+            </div>
         </div>
     </div>
     <div class="row justify-content-center">
@@ -44,10 +53,9 @@
             <a href="{% url 'webapp:announce_delete' announce.pk %}" class="user_links">Удалить</a>
         {% endif %}
         {% if user not in announce.clients.all and user.is_authenticated and user != announce.author and announce.status == 'active' and announce.seats > 0 %}
-            <a href="{% url 'webapp:client_add' announce.pk %}" class="user_links">Присоединиться</a>
+            <a href="{% url 'webapp:client_add' announce.pk %}" class="user_links">Бронь</a>
         {% elif user in announce.clients.all %}
-            <a href="{% url 'webapp:client_delete' announce.pk %}" class="user_links">Отказаться</a>
+            <a href="{% url 'webapp:client_delete' announce.pk %}" class="user_links">Отказ</a>
         {% endif %}
-
     </div>
 {% endblock %}

@@ -39,53 +39,59 @@
                 {% endfor %}
             </div>
             {% for announcement in announcements %}
-                <a href="{% url 'webapp:announce_detail' announcement.pk %}">
+
                 <div class="card my-3">
                     <div class="row no-gutters">
-                        <div class="card-img col-md-2">
-                            {% if announcement.author.profile.photo %}
-                                <img src="{{ announcement.author.profile.photo.url }}" class="card-img"
-                                     alt="Author photo">
-                            {% else %}
-                                <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ announcement.author.first_name }}</h5>
-                                <p class="card-text">
-                                    <b>Направление</b> {{ announcement.get_place_from_display }}-{{ announcement.get_place_to_display }}
-                                </p>
-                                <p class="card-text">
-                                    <b>Время:</b> {{ announcement.departure_time|date:'d-m-y   - H:m' }}</p>
-                                {% if announcement.price %}
-                                    <p class="card-text">{{ announcement.price }} сом</p>
+
+                        <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
+                        title='Профиль - {{ announcement.author.get_full_name }}'>
+                            <a href="{% url 'accounts:user_detail' announcement.author.pk %}">
+                                {% if announcement.author.profile.photo %}
+                                    <img src="{{ announcement.author.profile.photo.url }}" class="card-img"
+                                         alt="Author photo">
+                                {% else %}
+                                    <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
                                 {% endif %}
-                            </div>
-                                <div class="row justify-content-center">
-                                    {% if user not in announcement.clients.all and user.is_authenticated and user != announcement.author and announcement.status == 'active' and announcement.seats > 0 %}
-                                        <a href="{% url 'webapp:client_add' announcement.pk %}" class="user_links">Присоединиться</a>
-                                    {% elif user in announcement.clients.all %}
-                                        <a href="{% url 'webapp:client_delete' announcement.pk %}" class="user_links">Отказаться</a>
+                            </a>
+                        </div>
+                        <div class="col-md-6" data-toggle="tooltip" data-placement="top"
+                        title='Подробнее об объявлении'>
+                            <a href="{% url 'webapp:announce_detail' announcement.pk %}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ announcement.author.first_name }}</h5>
+                                    <p class="card-text">
+                                        <b>Направление</b> {{ announcement.get_place_from_display }}-{{ announcement.get_place_to_display }}
+                                    </p>
+                                    <p class="card-text">
+                                        <b>Время:</b> {{ announcement.departure_time|date:'d-m-y   - H:m' }}</p>
+                                    {% if announcement.price %}
+                                        <p class="card-text">{{ announcement.price }} сом</p>
                                     {% endif %}
                                 </div>
-
+                            </a>
                         </div>
                         <div class="col-md-4">
                             <div class="card-body">
-                                <p class="card-text">
-                                </p>
-                                <p class="card-text">
-                                </p>
-{#                                <p class="phone"><i class="fas fa-phone"></i></p>#}
-                                <div class="phone">
-                                    <span><i class="fas fa-phone"></i></span>
+                                <div class="row align-bottom d-inline-flex">
+                                    <div class="phone">
+                                        <span><i class="fas fa-phone"></i></span>
+                                    </div>
+                                    <div class="bron">
+                                    {% if user not in announcement.clients.all and user.is_authenticated and user != announcement.author and announcement.status == 'active' and announcement.seats > 0 %}
+                                        <a href="{% url 'webapp:client_add' announcement.pk %}"
+                                           class="user_links">Бронь</a>
+                                    {% elif user in announcement.clients.all %}
+                                        <a href="{% url 'webapp:client_delete' announcement.pk %}" class="user_links">Отказ</a>
+                                    {% endif %}
+                                    </div>
                                 </div>
+                                <p class="card-text"></p>
+                                <p class="card-text"></p>
                             </div>
                         </div>
                     </div>
                 </div>
-                </a>
+
             {% endfor %}
         </div>
     </div>
