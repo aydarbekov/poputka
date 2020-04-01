@@ -1,3 +1,4 @@
+import csv
 from datetime import datetime, timedelta
 
 from django.db.models import Q
@@ -6,7 +7,7 @@ from django.views.generic import ListView, CreateView, DetailView, DeleteView, U
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES, \
-    ClientsInAnnounce
+    ClientsInAnnounce, CarModel, Car
 from django.views.generic.base import View
 
 

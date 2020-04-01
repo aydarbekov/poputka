@@ -46,3 +46,19 @@ class ClientsInAnnounce(models.Model):
     announcement = models.ForeignKey('Announcements', on_delete=models.CASCADE)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     seats = models.IntegerField()
+
+
+class Car(models.Model):
+    mark = models.CharField(null=True, blank=True, max_length=100, verbose_name='Марка авто')
+
+    def __str__(self):
+        return self.mark
+
+
+class CarModel(models.Model):
+    mark = models.ForeignKey('Car', related_name='model', max_length=100, on_delete=models.CASCADE, verbose_name='Марка авто')
+    model = models.CharField(max_length=100, verbose_name='Модель авто')
+
+    def __str__(self):
+        return f'{self.mark} - {self.model}'
+
