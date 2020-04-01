@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {%  block content %}
     <div class="card" style="width: 18rem;">
-    {% if  announce.photo.url %}
+    {% if  announce.photo %}
         <img src="{{ announce.photo.url }}" class="card-img-top" alt="...">
         {% else %}
         <img src="/uploads/no_photo.jpg" class="card-img-top" alt="...">
