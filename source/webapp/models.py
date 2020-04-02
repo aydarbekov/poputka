@@ -62,3 +62,10 @@ class CarModel(models.Model):
     def __str__(self):
         return f'{self.mark} - {self.model}'
 
+
+class Review(models.Model):
+    user = models.ForeignKey('auth.User', related_name='user_review', on_delete=models.CASCADE, verbose_name='Пользователь')
+    text = models.TextField(max_length=500, verbose_name='Отзыв')
+
+    def __str__(self):
+        return self.text
