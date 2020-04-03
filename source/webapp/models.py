@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 ANNOUNCEMENT_STATUS_CHOICES = (
     ('active', 'Активный'),
@@ -62,3 +63,13 @@ class CarModel(models.Model):
     def __str__(self):
         return f'{self.mark} - {self.model}'
 
+
+class Review(models.Model):
+    announce = models.ForeignKey(Announcements, related_name='reviews', on_delete=models.CASCADE, verbose_name='Объявление', default=None)
+    grade = models.IntegerField(verbose_name='Оценка', default=None)
+    text = models.TextField(max_length=500, verbose_name='Отзыв', null=True, blank=True)
+    author = models.ForeignKey('auth.User', related_name='review_author', on_delete=models.CASCADE, verbose_name='Автор', default=None)
+    date = models.DateField(auto_now_add=True, null=True, blank=True, verbose_name='Дата')
+
+    def __str__(self):
+        return self.text

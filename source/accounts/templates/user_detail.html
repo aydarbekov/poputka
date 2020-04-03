@@ -104,4 +104,25 @@
                 <p>Пока нет поездок</p>
         {% endfor %}
     {% endif %}
+    <h4>Отзывы</h4>
+    <div class="reviews-list">
+    {% for announce in user_obj.announcement.all %}
+        {% for review in announce.reviews.all %}
+            <div class="comment" >
+
+                <p>{{ review.author }}
+{#                    commented at {{ comment.created_at|date:'d.m.Y H:i:s' }}#}
+                </p>
+                <p>{{ review.grade }}</p>
+                <div class="pre">{{ review.text }}</div>
+                <p class="comment-links">
+{#                    <a href="{% url 'webapp:comment_update' comment.pk %}">Edit</a>#}
+{#                    <a href="{% url 'webapp:comment_delete' comment.pk %}">Delete</a>#}
+                </p>
+            </div>
+        {% empty %}
+            <p>Отзывов нет</p>
+        {% endfor %}
+    {% endfor %}
+    </div>
 {% endblock %}

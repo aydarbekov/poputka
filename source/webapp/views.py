@@ -7,7 +7,7 @@ from django.views.generic import ListView, CreateView, DetailView, DeleteView, U
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES, \
-    ClientsInAnnounce, CarModel, Car
+    ClientsInAnnounce, CarModel, Car, Review
 from django.views.generic.base import View
 
 
@@ -159,3 +159,10 @@ class ClientDeleteView(View):
             announce.status = 'active'
         announce.save()
         return redirect('webapp:index')
+
+class ReviewListView(ListView):
+    context_object_name = 'reviews'
+    model = Review
+    template_name = 'review_list.html'
+    ordering = ['-created_at']
+
