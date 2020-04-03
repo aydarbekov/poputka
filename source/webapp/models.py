@@ -64,8 +64,11 @@ class CarModel(models.Model):
 
 
 class Review(models.Model):
-    user = models.ForeignKey('auth.User', related_name='user_review', on_delete=models.CASCADE, verbose_name='Пользователь')
-    text = models.TextField(max_length=500, verbose_name='Отзыв')
+    user = models.ForeignKey('auth.User', related_name='reviews', on_delete=models.CASCADE, verbose_name='Пользователь')
+    announce = models.ForeignKey(Announcements, related_name='reviews', on_delete=models.CASCADE, verbose_name='Объявление', default=None)
+    grade = models.IntegerField(verbose_name='Оценка', default=None)
+    text = models.TextField(max_length=500, verbose_name='Отзыв', null=True, blank=True)
+    author = models.ForeignKey('auth.User', related_name='review_author', on_delete=models.CASCADE, verbose_name='Автор', default=None)
 
     def __str__(self):
         return self.text
