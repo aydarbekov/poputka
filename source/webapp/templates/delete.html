@@ -6,6 +6,7 @@
         {% csrf_token %}
         <div class="confirm d-flex justify-content-center">
             <p><input type="submit" value="Да" class="btn btn-danger mt-5"></p>
+            <a id="cancelDel" href="{% url "webapp:announce_detail" announcements.pk %}" class="btn btn-dark ml-3">Нет</a>
         </div>
     </form>
 {% endblock %}

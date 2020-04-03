@@ -71,8 +71,8 @@ class AnnounceCreateView(CreateView):
     model = Announcements
     template_name = 'announce_create.html'
     # form_class = AnnounceCreationForm
-    fields = ['departure_time', 'seats', 'luggage', 'place_from', 'place_to', 'price', 'type',
-            'description', 'photo', 'status']
+    fields = ['type', 'description', 'place_from', 'place_to', 'departure_time', 'seats', 'luggage', 'price',
+            'photo']
     # clients = models.ManyToManyField('auth.User', null=True, blank=True, related_name='clients',
     #                                  verbose_name='Клиенты')
 
@@ -95,7 +95,7 @@ class AnnounceCreateView(CreateView):
         self.object.type = form.cleaned_data['type']
         self.object.description = form.cleaned_data['description']
         self.object.photo = form.cleaned_data['photo']
-        self.object.status = form.cleaned_data['status']
+        self.object.status = 'active'
         # if mobile_phone:
         #     self.object.mobile_phone = mobile_phone
         # else:

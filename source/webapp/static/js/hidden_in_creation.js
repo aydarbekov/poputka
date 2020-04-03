@@ -6,14 +6,14 @@ statuss = status_child.parentNode;   //Находим блок статуса п
 car_child = document.getElementById("id_car");    //Находим поле марки авто
 car = car_child.parentNode;       //Находим блок марки авто по его полю
 
-car_model_child = document.getElementById("id_car_model");    //Находим поле года окончания
-car_model = car_model_child.parentNode;       //Находим блок года окончания по его полю
+car_model_child = document.getElementById("id_car_model");
+car_model = car_model_child.parentNode;
 
-car_number_child = document.getElementById("id_car_number");    //Находим поле года окончания
-car_number = car_number_child.parentNode;       //Находим блок года окончания по его полю
+car_number_child = document.getElementById("id_car_number");
+car_number = car_number_child.parentNode;
 
-car_seats_child = document.getElementById("id_car_seats");    //Находим поле года окончания
-car_seats = car_seats_child.parentNode;       //Находим блок года окончания по его полю
+car_seats_child = document.getElementById("id_car_seats");
+car_seats = car_seats_child.parentNode;
 
 statuss.hidden = true;
 car.hidden = true;
@@ -21,10 +21,10 @@ car_model.hidden = true;
 car_number.hidden = true;
 car_seats.hidden = true;
 
-function hide(type) {       //Создаем функцию прятания полей, принимает тип эксперта
+function hide(type) {       //Создаем функцию прятания полей, принимает тип
   console.log(type);
 
-  if (type === "client" || type === '' ) {     //Если тип междунар эксперт или работодатель, то скрываем поля сертифицированности, аффилированности и года окончания
+  if (type === "client" || type === '' ) {
     statuss.hidden = true;
     car.hidden = true;
     car_model.hidden = true;
@@ -38,4 +38,5 @@ function hide(type) {       //Создаем функцию прятания п�
     car_seats.hidden = false;
   }
 }
-type.addEventListener('change', function(){hide(type.value)});      //Создаем листенер для типа эксперта, если меняется значение то передаем ее в функцию скрывания полей
+type.addEventListener('change', function(){hide(type.value)});      //Создаем листенер для типа ,
+// если меняется значение то передаем ее в функцию скрывания полей
