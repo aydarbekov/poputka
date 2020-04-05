@@ -1,9 +1,11 @@
+from django.conf import settings
 from django.contrib.auth.models import User
+from phonenumber_field.phonenumber import to_python, PhoneNumber
 from rest_framework import serializers
 
 from accounts import models
 from accounts.models import Profiles
-from webapp.models import Announcements
+from webapp.models import Announcements, Car, CarModel
 
 
 class AnnouncementSerializer(serializers.ModelSerializer):  # Сериализатор для обявлений
@@ -56,6 +58,42 @@ class UserSerializer(serializers.ModelSerializer):  # Сериализатор �
         profile.save()
         return user
 
-    # def update(self, instance, validated_data):
+    def update(self, instance, validated_data):
+        user = instance
+        if user.username != validated_data['username']:
+            user.username = validated_data['username']
+        if user.first_name != validated_data['first_name']:
+            user.first_name = validated_data['first_name']
+        if user.last_name != validated_data['last_name']:
+            user.last_name = validated_data['last_name']
+        if user.email != validated_data['email']:
+            user.email = validated_data['email']
+        user.save()
+        pof = validated_data['profile']
+        if user.profile.type != pof['type']:
+            user.profile.type = pof['type']
+        if str(user.profile.mobile_phone) != pof['mobile_phone']:  # Сразу переопределить не получилось
+            user.profile.mobile_phone = None
+            user.profile.mobile_phone = pof['mobile_phone']
+        if user.profile.country != pof['country']:
+            user.profile.country = pof['country']
 
-
+        print(pof['city'])
+        if user.profile.city != pof['city']:
+            user.profile.city = pof['city']
+        if user.profile.status != pof['status']:
+            user.profile.status = pof['status']
+        if user.profile.car != pof['car']:
+            user.profile.car = pof['car']
+        if user.profile.car_model != pof['car_model']:
+            user.profile.car_model = pof['car_model']
+        if user.profile.car_number != pof['car_number']:
+            user.profile.car_number = pof['car_number']
+        if user.profile.car_seats != pof['car_seats']:
+            user.profile.car_seats = pof['car_seats']
+        if user.profile.notification != pof['notification']:
+            user.profile.notification = pof['notification']
+        if user.profile.photo != pof['photo']:
+            user.profile.photo = pof['photo']
+        user.profile.save()
+        return user

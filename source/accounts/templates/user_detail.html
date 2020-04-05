@@ -36,6 +36,7 @@
                     <p>Уведомления: {{ user_obj.profile.notification }}</p>
                     {% if user_obj.profile.type == 'driver' %}
                         <p>Статус: {{ user_obj.profile.status }}</p>
+                        <p>Авто: {{ user_obj.profile.car }}</p>
                         <p>Модель авто: {{ user_obj.profile.car_model }}</p>
                         <p>Номер авто: {{ user_obj.profile.car_number }}</p>
                         <p>Кол-во сидений: {{ user_obj.profile.car_seats }}</p>
