@@ -100,3 +100,18 @@ class UserSerializer(serializers.ModelSerializer):  # Сериализатор �
 class PasswordSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=32)
     password_old = serializers.CharField(max_length=32)
+
+
+class CarModelSerializer(serializers.ModelSerializer):  # Сериализатор для моделей
+    class Meta:
+        model = CarModel
+        fields = ('id', 'mark', 'model')
+
+
+class CarSerializer(serializers.ModelSerializer):  # Сериализатор для Юзера
+    model = CarModelSerializer(many=True)         # Добавляем сериализатор профиля и добавляем в fields
+
+    class Meta:
+        model = Car
+        fields = ('id', 'mark', 'model')
+

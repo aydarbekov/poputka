@@ -160,6 +160,7 @@ class ClientDeleteView(View):
         announce.save()
         return redirect('webapp:index')
 
+
 class ReviewListView(ListView):
     context_object_name = 'reviews'
     model = Review
