@@ -77,8 +77,6 @@ class UserSerializer(serializers.ModelSerializer):  # Сериализатор �
             user.profile.mobile_phone = pof['mobile_phone']
         if user.profile.country != pof['country']:
             user.profile.country = pof['country']
-
-        print(pof['city'])
         if user.profile.city != pof['city']:
             user.profile.city = pof['city']
         if user.profile.status != pof['status']:
@@ -97,3 +95,8 @@ class UserSerializer(serializers.ModelSerializer):  # Сериализатор �
             user.profile.photo = pof['photo']
         user.profile.save()
         return user
+
+
+class PasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(max_length=32)
+    password_old = serializers.CharField(max_length=32)
