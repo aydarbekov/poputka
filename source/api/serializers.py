@@ -1,11 +1,14 @@
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.serializers import serialize
+from django.http import JsonResponse
 from phonenumber_field.phonenumber import to_python, PhoneNumber
 from rest_framework import serializers
+from rest_framework.response import Response
 
 from accounts import models
 from accounts.models import Profiles
-from webapp.models import Announcements, Car, CarModel
+from webapp.models import Announcements, Car, CarModel, ClientsInAnnounce
 
 
 class AnnouncementSerializer(serializers.ModelSerializer):  # Сериализатор для обявлений
@@ -115,3 +118,8 @@ class CarSerializer(serializers.ModelSerializer):  # Сериализатор д
         model = Car
         fields = ('id', 'mark', 'model')
 
+
+class ClientsInAnnounceSerializer(serializers.ModelSerializer):  # Сериализатор для клиентов
+    class Meta:
+        model = ClientsInAnnounce
+        fields = ('id', 'announcement', 'user', 'seats')
