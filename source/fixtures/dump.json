@@ -13,8 +13,7 @@
     "luggage": null,
     "price": null,
     "photo": "",
-    "status": "active",
-    "clients": []
+    "status": "active"
   }
 },
 {
@@ -31,8 +30,7 @@
     "luggage": null,
     "price": 1000,
     "photo": "",
-    "status": "active",
-    "clients": []
+    "status": "active"
   }
 },
 {
@@ -49,8 +47,7 @@
     "luggage": null,
     "price": 500,
     "photo": "",
-    "status": "active",
-    "clients": []
+    "status": "active"
   }
 },
 {
@@ -67,8 +64,112 @@
     "luggage": null,
     "price": 700,
     "photo": "",
-    "status": "active",
-    "clients": []
+    "status": "active"
+  }
+},
+{
+  "model": "webapp.announcements",
+  "pk": 5,
+  "fields": {
+    "author": 3,
+    "type": "driver",
+    "description": null,
+    "place_from": "Bishkek",
+    "place_to": "Osh",
+    "departure_time": "2020-04-08T21:15:44Z",
+    "seats": 2,
+    "luggage": null,
+    "price": null,
+    "photo": "",
+    "status": "completed"
+  }
+},
+{
+  "model": "webapp.review",
+  "pk": 1,
+  "fields": {
+    "announce": 4,
+    "grade": 4,
+    "text": "test",
+    "author": 2,
+    "date": "2020-04-03"
+  }
+},
+{
+  "model": "webapp.review",
+  "pk": 2,
+  "fields": {
+    "announce": 2,
+    "grade": 2,
+    "text": "test1",
+    "author": 1,
+    "date": "2020-04-05"
+  }
+},
+{
+  "model": "webapp.review",
+  "pk": 3,
+  "fields": {
+    "announce": 2,
+    "grade": 3,
+    "text": "test2",
+    "author": 1,
+    "date": "2020-04-05"
+  }
+},
+{
+  "model": "webapp.review",
+  "pk": 4,
+  "fields": {
+    "announce": 3,
+    "grade": 1,
+    "text": "test",
+    "author": 1,
+    "date": "2020-04-05"
+  }
+},
+{
+  "model": "webapp.review",
+  "pk": 5,
+  "fields": {
+    "announce": 3,
+    "grade": 2,
+    "text": "test4",
+    "author": 1,
+    "date": "2020-04-05"
+  }
+},
+{
+  "model": "webapp.review",
+  "pk": 6,
+  "fields": {
+    "announce": 2,
+    "grade": 2,
+    "text": "test5",
+    "author": 1,
+    "date": "2020-04-05"
+  }
+},
+{
+  "model": "webapp.review",
+  "pk": 7,
+  "fields": {
+    "announce": 1,
+    "grade": 4,
+    "text": "test6",
+    "author": 1,
+    "date": "2020-04-05"
+  }
+},
+{
+  "model": "webapp.review",
+  "pk": 8,
+  "fields": {
+    "announce": 1,
+    "grade": 3,
+    "text": "test7",
+    "author": 1,
+    "date": "2020-04-05"
   }
 }
 ]
