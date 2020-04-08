@@ -167,7 +167,6 @@ class ClientDeleteView(View):
 class ReviewListView(ListView):
     context_object_name = 'reviews'
     model = Review
-    template_name = 'review_list.html'
     ordering = ['-created_at']
 
 

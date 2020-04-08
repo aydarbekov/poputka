@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Удалить {{ title }}{% endblock %}
+{% block extra_class %} header{% endblock %}
 {% block content %}
     <h3>Вы уверены что хотите удалить {{ title }} :<br>"{{ object.direction }}"?</h3>
     <form method="POST"  class="text-center">

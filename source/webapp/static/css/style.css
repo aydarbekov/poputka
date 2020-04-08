@@ -37,7 +37,6 @@ a:hover{
 
 .header {
     background-color: #5bbc2e;
-    height: 60px;
 }
 
 .header .navbar-dark .navbar-nav .nav-link {
@@ -208,7 +207,7 @@ a:hover{
     color: white;
     display: inline-block;
     border-radius: 20px;
-    width: 9vw;
+    width: 11vw;
     text-align: center;
     margin-left: 15px;
 }
