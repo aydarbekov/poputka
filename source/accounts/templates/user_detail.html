@@ -4,6 +4,12 @@
 {% load widget_tweaks %}
 {% block title %}{{ user_obj.username }}{% endblock %}
 {% block extra_class %} header {% endblock %}
+{% block menu %}
+    {% if user_obj == request.user %}
+        <li><a class="nav-link" href="{% url 'accounts:user_update' user_obj.pk %}">Edit profile</a></li>
+        <li><a class="nav-link" href="{% url 'accounts:user_change_password' user_obj.pk %}">Change password</a></li>
+    {% endif %}
+{% endblock %}
 {% block content %}
     <div class="card my-3" style="border-color: #C60054">
         <div class="row no-gutters">
@@ -32,6 +38,7 @@
                     <p>Уведомления: {{ user_obj.profile.notification }}</p>
                     {% if user_obj.profile.type == 'driver' %}
                         <p>Статус: {{ user_obj.profile.status }}</p>
+                        <p>Авто: {{ user_obj.profile.car }}</p>
                         <p>Модель авто: {{ user_obj.profile.car_model }}</p>
                         <p>Номер авто: {{ user_obj.profile.car_number }}</p>
                         <p>Кол-во сидений: {{ user_obj.profile.car_seats }}</p>

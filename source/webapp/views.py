@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime, timedelta
+import datetime
 
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ValidationError
@@ -49,8 +49,8 @@ class IndexView(ListView):
         for announcement in Announcements.objects.all():
             timezone = announcement.departure_time.tzinfo
             # print("Departure", announcement.departure_time)
-            time_now = datetime.now(timezone)
-            time_end = time_now + timedelta(hours=1)
+            time_now = datetime.datetime.now(timezone)
+            time_end = time_now + datetime.timedelta(hours=1)
             # print("END", time_end)
             if announcement.departure_time <= time_end:
                 # print("Даааа")
@@ -74,8 +74,8 @@ class AnnounceCreateView(CreateView):
     model = Announcements
     template_name = 'announce_create.html'
     # form_class = AnnounceCreationForm
-    fields = ['departure_time', 'seats', 'luggage', 'place_from', 'place_to', 'price', 'type',
-            'description', 'photo', 'status']
+    fields = ['type', 'description', 'place_from', 'place_to', 'departure_time', 'seats', 'luggage', 'price',
+            'photo']
     # clients = models.ManyToManyField('auth.User', null=True, blank=True, related_name='clients',
     #                                  verbose_name='Клиенты')
 
@@ -98,7 +98,7 @@ class AnnounceCreateView(CreateView):
         self.object.type = form.cleaned_data['type']
         self.object.description = form.cleaned_data['description']
         self.object.photo = form.cleaned_data['photo']
-        self.object.status = form.cleaned_data['status']
+        self.object.status = 'active'
         # if mobile_phone:
         #     self.object.mobile_phone = mobile_phone
         # else:
@@ -162,6 +162,7 @@ class ClientDeleteView(View):
             announce.status = 'active'
         announce.save()
         return redirect('webapp:index')
+
 
 class ReviewListView(ListView):
     context_object_name = 'reviews'

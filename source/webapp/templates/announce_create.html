@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 {% block content %}
         <h1 class="text-center">Подать объявление</h1>
         <form action="{% url 'webapp:announce_create' %}" method="post" enctype="multipart/form-data">
-            {% include "partial/form.html" %}
+            {% include "partial/form_without_button.html" %}
             <p class="text-center"><input type="submit" value="Создать" class="btn btn-success"></p>
         </form>
+{% endblock %}
+{% block scripts %}
+    <script type="application/javascript" src="{% static "js/hidden_in_creation_for_announce.js" %}"></script>
 {% endblock %}
