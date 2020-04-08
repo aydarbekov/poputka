@@ -4,6 +4,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2
 from accounts.models import Profiles
+from webapp.forms import ReviewForm
 
 
 class SignUp(CreateView):
@@ -54,6 +55,7 @@ class UserDetailView(DetailView):
                       context['user_obj'].clients.all())
         history = sorted(history, key=lambda O: O.departure_time, reverse=True)
         context['history'] = history
+        context['review_form'] = ReviewForm()
         return context
 
 

@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{% load review %}
 {% load staticfiles %}
+{% load widget_tweaks %}
 {% block title %}{{ user_obj.username }}{% endblock %}
 {% block extra_class %} header {% endblock %}
 {% block content %}
@@ -81,8 +83,10 @@
                             {% csrf_token %}
                             <input type="hidden" id="custId" name="announcement_id" value="{{ announcement.pk }}">
                             <label for="quantity">Кол-во:</label>
-                            <input type="number" id="quantity" name="quantity" min="1" max="{{ announcement.seats }}" value="1" >
-                            <p class="text-center"><input type="submit" value="Бронь" class="btn user_links btn-success"></p>
+                            <input type="number" id="quantity" name="quantity" min="1" max="{{ announcement.seats }}"
+                                   value="1">
+                            <p class="text-center"><input type="submit" value="Бронь"
+                                                          class="btn user_links btn-success"></p>
                         </form>
                     {% elif user in announcement.clients.all %}
                         <a href="{% url 'webapp:client_delete' announcement.pk %}" class="user_links">Отказ</a>
@@ -90,33 +94,72 @@
                 </div>
                 {% if announcement.author == user %}
                     <a href="#" class="announce_links">Добавить фото</a>
-                    <a href="{% url 'webapp:announce_update' announcement.pk %}" class="announce_links">Редактировать</a>
+                    <a href="{% url 'webapp:announce_update' announcement.pk %}"
+                       class="announce_links">Редактировать</a>
                     <a href="{% url 'webapp:announce_delete' announcement.pk %}" class="announce_links">Удалить</a>
                 {% endif %}
             </div>
-            {% empty %}
-                <p>Пока нет поездок</p>
+            {% if user_obj != announcement.author and announcement.status == 'completed'%}
+                <div class="my-5">
+                    <form action="{% url 'webapp:review_create' announcement.pk %}" method="POST">
+                        {% csrf_token %}
+                        <h5 class="mt-5">Оставить отзыв</h5>
+                        <div class="row justify-content-between mt-3">
+                            <div class="review col-1.5 ml-3">
+                                {% for i in '12345'|make_list %}
+                                    <input type="radio" name="example" class="rating" value='i'/>
+                                {% endfor %}
+                            </div>
+                            {% for field in review_form %}
+                                <div class="col-9 d-flex mx-0 px-0"
+                                     style="width: 100%; height:50px">{{ field|add_class:'form-control' }}</div>
+                            {% endfor %}
+                            <div class="col-1"><input type="submit" value="Сохранить" class="btn btn-success mx-0">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+
+        {% empty %}
+            <p>Пока нет поездок</p>
         {% endfor %}
     {% endif %}
-    <h4>Отзывы</h4>
-    <div class="reviews-list">
-    {% for announce in user_obj.announcement.all %}
-        {% for review in announce.reviews.all %}
-            <div class="comment" >
-
-                <p>{{ review.author }}
-{#                    commented at {{ comment.created_at|date:'d.m.Y H:i:s' }}#}
-                </p>
-                <p>{{ review.grade }}</p>
-                <div class="pre">{{ review.text }}</div>
-                <p class="comment-links">
-{#                    <a href="{% url 'webapp:comment_update' comment.pk %}">Edit</a>#}
-{#                    <a href="{% url 'webapp:comment_delete' comment.pk %}">Delete</a>#}
-                </p>
-            </div>
-        {% empty %}
-            <p>Отзывов нет</p>
+    <div class="reviews-list mt-5">
+        <h4>Отзывы</h4>
+        {% for announce in user_obj.announcement.all %}
+            {% for review in announce.reviews.all %}
+                <div class="row comment">
+                    <div class="col-2">
+                        {% if review.author.profile.photo %}
+                            <img src="{{ review.author.profile.photo.url }}"
+                                 alt="Author photo">
+                        {% else %}
+                            <img src="{% static 'No_person-1.jpg' %}" alt="No photo">
+                        {% endif %}
+                        <p>{{ review.author }}. Cоздана: {{ review.date|date:'d.m.Y' }}</p>
+                        {% for i in review.grade|times %}
+                            <div class="d-inline-block">
+                                <i class=" fas fa-star" style="position: relative"></i>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-10 review_text">{{ review.text }}</div>
+                    <p class="comment-links">
+                        {#                    <a href="{% url 'webapp:comment_update' comment.pk %}">Edit</a>#}
+                    </p>
+                </div>
+            {% empty %}
+                <p>Отзывов нет</p>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
     </div>
+
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript">
+        $(function () {
+            $('.review').rating();
+        });
+    </script>
 {% endblock %}

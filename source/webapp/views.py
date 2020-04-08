@@ -1,11 +1,14 @@
 import csv
 from datetime import datetime, timedelta
 
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from webapp.forms import ReviewForm
 from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES, \
     ClientsInAnnounce, CarModel, Car, Review
 from django.views.generic.base import View
@@ -165,4 +168,25 @@ class ReviewListView(ListView):
     model = Review
     template_name = 'review_list.html'
     ordering = ['-created_at']
+
+
+class ReviewCreateView(UserPassesTestMixin, CreateView):
+    model = Review
+    form_class = ReviewForm
+
+    def form_valid(self, form):
+        self.announce_pk = self.kwargs.get('pk')
+        announcement = get_object_or_404(Announcements, pk=self.announce_pk)
+        review = Review(
+            announce = announcement,
+            grade =form.cleaned_data['grade'],
+            text= form.cleaned_data['text'],
+            author = self.request.user
+        )
+        review.save()
+        return redirect('accounts:user_detail', pk=review.announce.author_id)
+
+    def test_func(self):
+        announcement = get_object_or_404(Announcements, pk=self.kwargs.get('pk'))
+        return self.request.user != announcement.author
 
