@@ -44,20 +44,36 @@ class UserSerializer(serializers.ModelSerializer):  # Сериализатор �
         user.set_password(validated_data['password'])
         user.save()
         pof = validated_data['profile']
-        profile = Profiles(
-            user=user,
-            type=pof['type'],
-            mobile_phone=pof['mobile_phone'],
-            country=pof['country'],
-            city=pof['city'],
-            status=pof['status'],
-            car=pof['car'],
-            car_model=pof['car_model'],
-            car_number=pof['car_number'],
-            car_seats=pof['car_seats'],
-            notification=pof['notification'],
-            photo=pof['photo']
-        )
+        try:
+            photo = pof['photo']
+            profile = Profiles(
+                user=user,
+                type=pof['type'],
+                mobile_phone=pof['mobile_phone'],
+                country=pof['country'],
+                city=pof['city'],
+                status=pof['status'],
+                car=pof['car'],
+                car_model=pof['car_model'],
+                car_number=pof['car_number'],
+                car_seats=pof['car_seats'],
+                notification=pof['notification'],
+                photo=pof['photo']
+            )
+        except:
+            profile = Profiles(
+                user=user,
+                type=pof['type'],
+                mobile_phone=pof['mobile_phone'],
+                country=pof['country'],
+                city=pof['city'],
+                status=pof['status'],
+                car=pof['car'],
+                car_model=pof['car_model'],
+                car_number=pof['car_number'],
+                car_seats=pof['car_seats'],
+                notification=pof['notification'],
+            )
         profile.save()
         return user
 
@@ -94,8 +110,11 @@ class UserSerializer(serializers.ModelSerializer):  # Сериализатор �
             user.profile.car_seats = pof['car_seats']
         if user.profile.notification != pof['notification']:
             user.profile.notification = pof['notification']
-        if user.profile.photo != pof['photo']:
-            user.profile.photo = pof['photo']
+        try:
+            photo = pof['photo']
+            user.profile.photo = photo
+        except:
+            user.profile.photo = None
         user.profile.save()
         return user
 
