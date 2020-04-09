@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 ANNOUNCEMENT_STATUS_CHOICES = (
     ('active', 'Активный'),
@@ -46,3 +47,29 @@ class ClientsInAnnounce(models.Model):
     announcement = models.ForeignKey('Announcements', on_delete=models.CASCADE)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     seats = models.IntegerField()
+
+
+class Car(models.Model):
+    mark = models.CharField(null=True, blank=True, max_length=100, verbose_name='Марка авто')
+
+    def __str__(self):
+        return self.mark
+
+
+class CarModel(models.Model):
+    mark = models.ForeignKey('Car', related_name='model', max_length=100, on_delete=models.CASCADE, verbose_name='Марка авто')
+    model = models.CharField(max_length=100, verbose_name='Модель авто')
+
+    def __str__(self):
+        return f'{self.mark} - {self.model}'
+
+
+class Review(models.Model):
+    announce = models.ForeignKey(Announcements, related_name='reviews', on_delete=models.CASCADE, verbose_name='Объявление', default=None)
+    grade = models.IntegerField(verbose_name='Оценка', default=None)
+    text = models.TextField(max_length=500, verbose_name='Отзыв', null=True, blank=True)
+    author = models.ForeignKey('auth.User', related_name='review_author', on_delete=models.CASCADE, verbose_name='Автор', default=None)
+    date = models.DateField(auto_now_add=True, null=True, blank=True, verbose_name='Дата')
+
+    def __str__(self):
+        return self.text

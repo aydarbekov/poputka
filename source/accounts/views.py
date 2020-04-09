@@ -1,9 +1,12 @@
+from django.contrib.auth import login
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
-from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2
+from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2, UserChangePasswordForm
 from accounts.models import Profiles
+from webapp.forms import ReviewForm
 
 
 class SignUp(CreateView):
@@ -54,6 +57,7 @@ class UserDetailView(DetailView):
                       context['user_obj'].clients.all())
         history = sorted(history, key=lambda O: O.departure_time, reverse=True)
         context['history'] = history
+        context['review_form'] = ReviewForm()
         return context
 
 
@@ -95,6 +99,24 @@ class UserUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('accounts:user_detail', kwargs={'pk': self.object.pk})
+
+
+class UserPasswordChangeView(UserPassesTestMixin, UpdateView):
+    model = User
+    template_name = 'user_password_change.html'
+    form_class = UserChangePasswordForm
+    context_object_name = 'user_obj'
+
+    def test_func(self):
+        return self.get_object() == self.request.user
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('accounts:login')
 
 
 class UserDeleteView(DeleteView):

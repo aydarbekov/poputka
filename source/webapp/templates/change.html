@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
+{% block extra_class %} header{% endblock %}
 {% block title %}Обновить{% endblock %}
 {% block content %}
     <h1>Обновление {{ title }}</h1>
     <form method="POST">
-        {% include 'partial/form.html' %}
+        {% include 'partial/form_without_button.html' %}
         <p class="text-center"><input type="submit" value="Обновить" class="btn btn-primary"></p>
     </form>
     {% for message in messages %}

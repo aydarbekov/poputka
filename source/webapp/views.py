@@ -1,12 +1,16 @@
-from datetime import datetime, timedelta
+import csv
+import datetime
 
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from webapp.forms import ReviewForm
 from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES, \
-    ClientsInAnnounce
+    ClientsInAnnounce, CarModel, Car, Review
 from django.views.generic.base import View
 
 
@@ -45,8 +49,8 @@ class IndexView(ListView):
         for announcement in Announcements.objects.all():
             timezone = announcement.departure_time.tzinfo
             # print("Departure", announcement.departure_time)
-            time_now = datetime.now(timezone)
-            time_end = time_now + timedelta(hours=1)
+            time_now = datetime.datetime.now(timezone)
+            time_end = time_now + datetime.timedelta(hours=1)
             # print("END", time_end)
             if announcement.departure_time <= time_end:
                 # print("Даааа")
@@ -70,8 +74,8 @@ class AnnounceCreateView(CreateView):
     model = Announcements
     template_name = 'announce_create.html'
     # form_class = AnnounceCreationForm
-    fields = ['departure_time', 'seats', 'luggage', 'place_from', 'place_to', 'price', 'type',
-            'description', 'photo', 'status']
+    fields = ['type', 'description', 'place_from', 'place_to', 'departure_time', 'seats', 'luggage', 'price',
+            'photo']
     # clients = models.ManyToManyField('auth.User', null=True, blank=True, related_name='clients',
     #                                  verbose_name='Клиенты')
 
@@ -94,7 +98,7 @@ class AnnounceCreateView(CreateView):
         self.object.type = form.cleaned_data['type']
         self.object.description = form.cleaned_data['description']
         self.object.photo = form.cleaned_data['photo']
-        self.object.status = form.cleaned_data['status']
+        self.object.status = 'active'
         # if mobile_phone:
         #     self.object.mobile_phone = mobile_phone
         # else:
@@ -158,3 +162,30 @@ class ClientDeleteView(View):
             announce.status = 'active'
         announce.save()
         return redirect('webapp:index')
+
+
+class ReviewListView(ListView):
+    context_object_name = 'reviews'
+    model = Review
+    ordering = ['-created_at']
+
+
+class ReviewCreateView(UserPassesTestMixin, CreateView):
+    model = Review
+    form_class = ReviewForm
+
+    def form_valid(self, form):
+        announcement = get_object_or_404(Announcements, pk=self.kwargs.get('pk'))
+        review = Review(
+            announce=announcement,
+            grade=self.request.POST.get('example'),
+            text=form.cleaned_data['text'],
+            author=self.request.user
+        )
+        review.save()
+        return redirect('accounts:user_detail', pk=review.announce.author_id)
+
+    def test_func(self):
+        announcement = get_object_or_404(Announcements, pk=self.kwargs.get('pk'))
+        return self.request.user != announcement.author
+

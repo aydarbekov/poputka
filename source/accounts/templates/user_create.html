@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+{% block extra_class %} header{% endblock %}
 {% block title %}Регистрация{% endblock %}
 {% block content %}
         <h1 class="text-center">Регистрация</h1>
@@ -9,4 +11,7 @@
                 <input type="submit" class="btn btn-dark" id="createExpert" value="Создать">
             </div>
         </form>
+{% endblock %}
+{% block scripts %}
+    <script type="application/javascript" src="{% static "js/hidden_in_creation.js" %}"></script>
 {% endblock %}

@@ -11,6 +11,10 @@
                 {% else %}
                     <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
                 {% endif %}
+                {% if announce.photo %}
+                    <img src="{{ announce.photo.url }}" class="card-img"
+                         alt="Author photo">
+                {% endif %}
             </div>
             <div class="col-md-4">
                 <div class="card-body">
