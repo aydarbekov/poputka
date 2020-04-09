@@ -1,8 +1,13 @@
-from django.shortcuts import render
+from datetime import datetime, timedelta
+
+from django.db.models import Q
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
-from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES
+from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES, \
+    ClientsInAnnounce
+from django.views.generic.base import View
 
 
 class PassengersList(ListView):
@@ -11,7 +16,7 @@ class PassengersList(ListView):
     context_object_name = 'announcements'
 
     def get_queryset(self, *args, **kwargs):
-        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[0][0])
+        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[0][0], status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
 
 
 class DriversList(ListView):
@@ -20,10 +25,7 @@ class DriversList(ListView):
     context_object_name = 'announcements'
 
     def get_queryset(self, *args, **kwargs):
-        print(Announcements.objects.all())
-        print(Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[0][0]))
-        print(Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[1][0]))
-        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[1][0])
+        return Announcements.objects.filter(type=ANNOUNCEMENT_TYPE_CHOICES[1][0], status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
 
 
 class IndexView(ListView):
@@ -31,8 +33,37 @@ class IndexView(ListView):
     template_name = 'index.html'
     context_object_name = 'announcements'
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['regions'] = REGION_CHOICES
+        return context
+
     # def get_queryset(self, *args, **kwargs):
     #         return Announcements.objects.filter(user__profile__driver__status='free')
+
+    def change_status(self, *args, **kwargs):
+        for announcement in Announcements.objects.all():
+            timezone = announcement.departure_time.tzinfo
+            # print("Departure", announcement.departure_time)
+            time_now = datetime.now(timezone)
+            time_end = time_now + timedelta(hours=1)
+            # print("END", time_end)
+            if announcement.departure_time <= time_end:
+                # print("Даааа")
+                # print(announcement.status)
+                announcement.status = ANNOUNCEMENT_STATUS_CHOICES[1][0]
+                announcement.save()
+                # print(announcement.status)
+
+    def get(self, request, *args, **kwargs):
+        self.change_status()
+        return super(IndexView, self).get(request, *args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        region = self.request.GET.get('region')
+        if region:
+            return Announcements.objects.filter(Q(status=ANNOUNCEMENT_STATUS_CHOICES[0][0]), Q(place_from=region) | Q(place_to=region))
+        return Announcements.objects.filter(status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
 
 
 class AnnounceCreateView(CreateView):
@@ -76,12 +107,12 @@ class AnnounceCreateView(CreateView):
         return reverse('webapp:index')
 
 
-class AnnounceDetailView(DeleteView):
+class AnnounceDetailView(DetailView):
     model = Announcements
     template_name = 'announce_detail.html'
     context_object_name = 'announce'
-#
-#
+
+
 class AnnounceUpdateView(UpdateView):
     model = Announcements
     template_name = 'change.html'
@@ -99,3 +130,31 @@ class AnnounceDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse('webapp:index')
+
+
+class ClientAddView(View):
+    def post(self, *args, **kwargs):
+        announcement_id = self.request.POST.get('announcement_id')
+        quantity = self.request.POST.get('quantity')
+        announce = Announcements.objects.get(id=announcement_id)
+        user = self.request.user
+        new = ClientsInAnnounce(announcement=announce, user=user, seats=int(quantity))
+        new.save()
+        announce.seats -= int(quantity)
+        if announce.seats == 0:
+            announce.status = 'completed'
+        announce.save()
+        return redirect('webapp:index')
+
+
+class ClientDeleteView(View):
+    def get(self, *args, **kwargs):
+        announce = Announcements.objects.get(id=kwargs['pk'])
+        user = announce.clients.get(username=self.request.user)
+        clientinannounce = ClientsInAnnounce.objects.get(announcement=announce, user=user)
+        announce.seats += clientinannounce.seats
+        announce.clients.remove(self.request.user)
+        if announce.seats >= 1:
+            announce.status = 'active'
+        announce.save()
+        return redirect('webapp:index')

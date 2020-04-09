@@ -13,7 +13,7 @@
     "luggage": null,
     "price": null,
     "photo": "",
-    "status": "completed",
+    "status": "active",
     "clients": []
   }
 },
@@ -31,7 +31,7 @@
     "luggage": null,
     "price": 1000,
     "photo": "",
-    "status": "completed",
+    "status": "active",
     "clients": []
   }
 },
@@ -49,7 +49,7 @@
     "luggage": null,
     "price": 500,
     "photo": "",
-    "status": "completed",
+    "status": "active",
     "clients": []
   }
 },
