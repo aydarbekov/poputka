@@ -175,13 +175,12 @@ class ReviewCreateView(UserPassesTestMixin, CreateView):
     form_class = ReviewForm
 
     def form_valid(self, form):
-        self.announce_pk = self.kwargs.get('pk')
-        announcement = get_object_or_404(Announcements, pk=self.announce_pk)
+        announcement = get_object_or_404(Announcements, pk=self.kwargs.get('pk'))
         review = Review(
-            announce = announcement,
-            grade =form.cleaned_data['grade'],
-            text= form.cleaned_data['text'],
-            author = self.request.user
+            announce=announcement,
+            grade=self.request.POST.get('example'),
+            text=form.cleaned_data['text'],
+            author=self.request.user
         )
         review.save()
         return redirect('accounts:user_detail', pk=review.announce.author_id)

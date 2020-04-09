@@ -109,7 +109,7 @@
                         <div class="row justify-content-between mt-3">
                             <div class="review col-1.5 ml-3">
                                 {% for i in '12345'|make_list %}
-                                    <input type="radio" name="example" class="rating" value='i'/>
+                                    <input type="radio" name="example" class="rating" value={{ i }}>
                                 {% endfor %}
                             </div>
                             {% for field in review_form %}
@@ -152,6 +152,7 @@
                     </p>
                 </div>
             {% empty %}
+
                 <p>Отзывов нет</p>
             {% endfor %}
         {% endfor %}
