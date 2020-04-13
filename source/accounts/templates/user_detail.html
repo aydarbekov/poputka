@@ -54,7 +54,7 @@
             <div class="card my-2">
                 <div class="row no-gutters">
                     <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
-                             title='Профиль - {{ announcement.author }}'>
+                         title='Профиль - {{ announcement.author }}'>
                         <a href="{% url 'accounts:user_detail' announcement.author.pk %}">
                             {% if announcement.author.profile.photo %}
                                 <img src="{{ announcement.author.profile.photo.url }}" class="card-img"
@@ -65,23 +65,37 @@
                         </a>
                     </div>
                     <div class="col-md-6" data-toggle="tooltip" data-placement="top"
-                             title='Подробнее об объявлении'>
-                            <a href="{% url 'webapp:announce_detail' announcement.pk %}">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ announcement.author.first_name }}</h5>
-                                    <p class="card-text">
-                                        <b>Направление</b> {{ announcement.get_place_from_display }}-{{ announcement.get_place_to_display }}
-                                    </p>
-                                    {% if announcement.description %}<p class="card-text">Описание: {{ announcement.description }}</p>{% endif %}
-                                    <p class="card-text">
-                                        <b>Время:</b> {{ announcement.departure_time|date:'d-m-y   - H:m' }}</p>
-                                    <p class="card-text"><b>Мест:</b> {{ announcement.seats }}{% if announcement.luggage %}<b class="ml-3">Багаж:</b>{{ announcement.luggage }}{% endif %}</p>
-                                    {% if announcement.price %}
-                                        <p class="card-text">{{ announcement.price }} сом</p>
-                                    {% endif %}
-                                </div>
-                            </a>
+                         title='Подробнее об объявлении'>
+                        <a href="{% url 'webapp:announce_detail' announcement.pk %}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ announcement.author.first_name }}</h5>
+                                <p class="card-text">
+                                    <b>Направление</b> {{ announcement.get_place_from_display }}-{{ announcement.get_place_to_display }}
+                                </p>
+                                {% if announcement.description %}
+                                    <p class="card-text">Описание: {{ announcement.description }}</p>{% endif %}
+                                <p class="card-text">
+                                    <b>Время:</b> {{ announcement.departure_time|date:'d-m-y   - H:m' }}</p>
+                                <p class="card-text"><b>Мест:</b>
+                                    {{ announcement.seats }}{% if announcement.luggage %}<b class="ml-3">Багаж:</b>
+                                        {{ announcement.luggage }}{% endif %}</p>
+                                {% if announcement.price %}
+                                    <p class="card-text">{{ announcement.price }} сом</p>
+                                {% endif %}
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-body">
+                            {% if user == announcement.author and announcement.clients.all %}
+                                <p class="card-text"><b>Клиенты:</b>
+                                    {% for client in announcement.clients.all %}
+                                        <a href="{% url 'accounts:user_detail' client.pk %}">{{ client }}</a>
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
                         </div>
+                    </div>
                 </div>
             </div>
             <div class="row justify-content-center">
