@@ -61,7 +61,7 @@ class CarModel(models.Model):
     model = models.CharField(max_length=100, verbose_name='Модель авто')
 
     def __str__(self):
-        return f'{self.mark} - {self.model}'
+        return self.model
 
 
 class Review(models.Model):
