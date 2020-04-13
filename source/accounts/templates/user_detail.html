@@ -148,28 +148,30 @@
         {% endfor %}
     {% endif %}
     <div class="reviews-list mt-5">
-        <h4>Отзывы</h4>
         {% for announce in user_obj.announcement.all %}
             {% for review in announce.reviews.all %}
-                <div class="row comment">
-                    <div class="col-2">
-                        {% if review.author.profile.photo %}
-                            <img src="{{ review.author.profile.photo.url }}"
-                                 alt="Author photo">
-                        {% else %}
-                            <img src="{% static 'No_person-1.jpg' %}" alt="No photo">
-                        {% endif %}
-                        <p>{{ review.author }}. Cоздана: {{ review.date|date:'d.m.Y' }}</p>
-                        {% for i in review.grade|times %}
-                            <div class="d-inline-block">
-                                <i class=" fas fa-star" style="position: relative"></i>
-                            </div>
-                        {% endfor %}
+                {% if review %}
+                    <h4>Отзывы</h4>
+                    <div class="row comment">
+                        <div class="col-2">
+                            {% if review.author.profile.photo %}
+                                <img src="{{ review.author.profile.photo.url }}"
+                                     alt="Author photo">
+                            {% else %}
+                                <img src="{% static 'No_person-1.jpg' %}" alt="No photo">
+                            {% endif %}
+                            <p>{{ review.author }}. Cоздана: {{ review.date|date:'d.m.Y' }}</p>
+                            {% for i in review.grade|times %}
+                                <div class="d-inline-block">
+                                    <i class=" fas fa-star" style="position: relative"></i>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-10 review_text">{{ review.text }}</div>
+                        <p class="comment-links">
+                        </p>
                     </div>
-                    <div class="col-10 review_text">{{ review.text }}</div>
-                    <p class="comment-links">
-                    </p>
-                </div>
+                {% endif %}
             {% empty %}
 
                 <p>Отзывов нет</p>

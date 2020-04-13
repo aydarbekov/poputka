@@ -6,7 +6,7 @@ from accounts.models import Profiles
 
 
 class SignUpForm(UserCreationForm):
-    email = forms.EmailField(required=True, label='Email')
+    email = forms.EmailField(required=True, label='Почта')
 
     class Meta(UserCreationForm.Meta):
         fields = ('username', 'first_name', 'last_name', 'email')
