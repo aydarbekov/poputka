@@ -1,0 +1,51 @@
+.phone  {
+    display: table;
+}
+.phone span{
+    background-color: #5bbc2e;
+    border-radius: 50%;
+    color: white;
+    padding: 10px;
+    font-size: 18px !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transform-origin: 50% 0 0;
+    vertical-align: middle;
+}
+.phone:hover >span i {
+    animation: 1300ms ease 0s normal none 1 running shake;
+}
+@keyframes shake {
+0% {
+    transform: rotateZ(0deg);
+}
+10% {
+    transform: rotateZ(-30deg);
+}
+20% {
+    transform: rotateZ(15deg);
+}
+30% {
+    transform: rotateZ(-10deg);
+}
+40% {
+    transform: rotateZ(7.5deg);
+}
+50% {
+    transform: rotateZ(-6deg);
+}
+60% {
+    transform: rotateZ(5deg);
+}
+70% {
+    transform: rotateZ(-4.28571deg);
+}
+80% {
+    transform: rotateZ(3.75deg);
+}
+90% {
+    transform: rotateZ(-3.33333deg);
+}
+100% {
+    transform: rotateZ(0deg);
+}
+}

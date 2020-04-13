@@ -61,7 +61,7 @@ class UserDetailView(DetailView):
         return context
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(UserPassesTestMixin, UpdateView):
     model = User
     template_name = 'user_update.html'
     context_object_name = 'user'
@@ -100,6 +100,9 @@ class UserUpdateView(UpdateView):
     def get_success_url(self):
         return reverse('accounts:user_detail', kwargs={'pk': self.object.pk})
 
+    def test_func(self):
+        return self.get_object() == self.request.user
+
 
 class UserPasswordChangeView(UserPassesTestMixin, UpdateView):
     model = User
@@ -119,7 +122,10 @@ class UserPasswordChangeView(UserPassesTestMixin, UpdateView):
         return reverse('accounts:login')
 
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(UserPassesTestMixin, DeleteView):
     template_name = 'user_delete.html'
     model = User
     success_url = reverse_lazy('webapp:index')
+
+    def test_func(self):
+        return self.get_object() == self.request.user

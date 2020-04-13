@@ -4,19 +4,22 @@
 {% block content %}
     <div class="card my-3">
         <div class="row no-gutters">
-            <div class="card-img col-md-2">
-                {% if announce.author.profile.photo %}
-                    <img src="{{ announce.author.profile.photo.url }}" class="card-img"
-                         alt="Author photo">
-                {% else %}
-                    <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
-                {% endif %}
-                {% if announce.photo %}
-                    <img src="{{ announce.photo.url }}" class="card-img"
-                         alt="Author photo">
-                {% endif %}
+            <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
+                 title='Профиль - {{ announce.author }}'>
+                <a href="{% url 'accounts:user_detail' announce.author.pk %}">
+                    {% if announce.author.profile.photo %}
+                        <img src="{{ announce.author.profile.photo.url }}" class="card-img"
+                             alt="Author photo">
+                    {% else %}
+                        <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
+                    {% endif %}
+                    {% if announce.photo %}
+                        <img src="{{ announce.photo.url }}" class="card-img"
+                             alt="Author photo">
+                    {% endif %}
+                </a>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card-body">
                     <h5 class="card-title">{{ announce.author.first_name }}</h5>
                     <p class="card-text">
@@ -29,7 +32,7 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card-body">
                     <p>Тип: {{ announce.author.profile.type }}</p>
                     {% if announce.author.profile.type == 'driver' %}
@@ -40,14 +43,16 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="col-md-4">
-                {% if user == announce.author %}
-                    <p class="card-text">Клиенты:
-                        {% for client in announce.clients.all %}
-                            <a href="{% url 'accounts:user_detail' client.pk %}">{{ client }}</a>
-                        {% endfor %}
-                    </p>
-                {% endif %}
+            <div class="col-md-3">
+                <div class="card-body">
+                    {% if user == announce.author and announce.clients.all %}
+                        <p class="card-text"><b>Клиенты:</b>
+                            {% for client in announce.clients.all %}
+                                <a href="{% url 'accounts:user_detail' client.pk %}">{{ client }}</a>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -62,7 +67,7 @@
                     {% csrf_token %}
                     <input type="hidden" id="custId" name="announcement_id" value="{{ announce.pk }}">
                     <label for="quantity">Кол-во:</label>
-                    <input type="number" id="quantity" name="quantity" min="1" max="{{ announce.seats }}" value="1" >
+                    <input type="number" id="quantity" name="quantity" min="1" max="{{ announce.seats }}" value="1">
                     <p class="text-center"><input type="submit" value="Бронь" class="btn user_links btn-success"></p>
                 </form>
             {% elif user in announcement.clients.all %}

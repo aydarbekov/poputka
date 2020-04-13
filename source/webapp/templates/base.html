@@ -14,6 +14,9 @@
           integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static "css/style.css" %}">
     <link rel="stylesheet" href="{% static "css/animate.css" %}">
+    <link rel="stylesheet" href="{% static "css/calendar.css" %}">
+    <link rel="stylesheet" href="{% static "css/star.css" %}">
+    <link rel="stylesheet" href="{% static "css/phone.css" %}">
     <link rel="stylesheet" href="{% static 'js/jquery.min.js' %}">
     <link rel="stylesheet" href="{% static 'js/main.js' %}">
     <link rel="stylesheet" href="{% static 'js/review.js' %}">
@@ -56,6 +59,7 @@
         </nav>
     </div>
     {% block car %}{% endblock %}
+    {% block additional %}{% endblock %}
 </header>
 <div class="container">
     {% block content %}{% endblock %}
@@ -74,6 +78,32 @@
 <script type="application/javascript" src="{% static "js/wow.min.js" %}"></script>
 <script type="application/javascript" src="{% static "js/review.js" %}"></script>
 <script>new WOW().init();</script>
+
+<script type="application/javascript">
+    var  agent = window.navigator.userAgent;
+    if (agent.includes("Mobile")) {
+        $('.hidden').hide();
+    }
+    else if(agent.includes("Android")){
+        $('.hidden').hide();
+    }
+    else if(agent.includes("IOS")){
+        $('.hidden').hide();
+    }
+</script>
+{#<script type="application/javascript">#}
+{#    var lastTop;#}
+{#function stopScrolling() {#}
+{#    lastTop = $(window).scrollTop();#}
+{#    $('body').addClass( 'noscroll' )#}
+{#         .css( { top: -lastTop } )#}
+{#         ;#}
+{#}#}
+{#function continueScrolling() {#}
+{#    $('body').removeClass( 'noscroll' );#}
+{#    $(window).scrollTop( lastTop );#}
+{#}#}
+{#</script>#}
 {% block scripts %}{% endblock %}
 </body>
     <div class="modal fade" id="UserModal" tabindex="-1" role="dialog" aria-hidden="true">

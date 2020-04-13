@@ -1,7 +1,6 @@
 import csv
 import datetime
-
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
@@ -70,7 +69,7 @@ class IndexView(ListView):
         return Announcements.objects.filter(status=ANNOUNCEMENT_STATUS_CHOICES[0][0])
 
 
-class AnnounceCreateView(CreateView):
+class AnnounceCreateView(LoginRequiredMixin, CreateView):
     model = Announcements
     template_name = 'announce_create.html'
     # form_class = AnnounceCreationForm
@@ -117,7 +116,7 @@ class AnnounceDetailView(DetailView):
     context_object_name = 'announce'
 
 
-class AnnounceUpdateView(UpdateView):
+class AnnounceUpdateView(LoginRequiredMixin, UpdateView):
     model = Announcements
     template_name = 'change.html'
     fields = ['departure_time', 'seats', 'luggage', 'place_from', 'place_to', 'price', 'type',
@@ -128,7 +127,7 @@ class AnnounceUpdateView(UpdateView):
         return reverse('webapp:index')
 
 
-class AnnounceDeleteView(DeleteView):
+class AnnounceDeleteView(LoginRequiredMixin, DeleteView):
     model = Announcements
     template_name = 'delete.html'
 
@@ -188,5 +187,5 @@ class ReviewCreateView(UserPassesTestMixin, CreateView):
 
     def test_func(self):
         announcement = get_object_or_404(Announcements, pk=self.kwargs.get('pk'))
-        return self.request.user != announcement.author
+        return self.request.user != announcement.author and announcement.status == 'completed'
 
