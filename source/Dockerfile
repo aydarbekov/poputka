@@ -16,8 +16,10 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 #COPY ./requirements.txt /usr/src/app/requirements.txt
-RUN apk add --virtual muk python3-dev musl-dev gcc zlib-dev jpeg-dev postgresql-dev \
+RUN apk add --virtual poputka python3-dev musl-dev gcc zlib-dev jpeg-dev postgresql-dev \
     && pip install --upgrade pip \
+#    && pwd \
+#    && ls /.. \
     && pip install -r requirements.txt
 
 ## copy project

@@ -14,7 +14,7 @@ ENV PYTHONUNBUFFERED 1
 
 # install psycopg2 dependencies
 RUN apk update \
-    && apk add --virtual vs_shop python3-dev musl-dev gcc zlib-dev jpeg-dev postgresql-dev
+    && apk add --virtual poputka python3-dev musl-dev gcc zlib-dev jpeg-dev postgresql-dev
 
 # lint
 RUN pip install --upgrade pip
