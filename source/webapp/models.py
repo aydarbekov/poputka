@@ -18,7 +18,7 @@ REGION_CHOICES = (
     ('Naryn', 'Нарын'),
     ('Issykkul', 'Иссыкуль'),
     ('Osh', 'Ош'),
-    ('Jalal-Abad', 'Жалал-Абад'),
+    ('Jalal-Abad', 'Ж-Абад'),
     ('Batken', 'Баткен')
 )
 

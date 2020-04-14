@@ -1,15 +1,17 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block extra_class %}main-header{% endblock %}
+{% block additional %}
+    <div class="additional hidden"></div>{% endblock %}
 {% block car %}
-    <div class="rightconcave"></div>
-    <div><img class="car" src="{% static 'Car-Image.png' %}" alt=""></div>
-    <div class="col-lg-12 col-md-6 col-1"><p class="credo">В добрый путь ...</p></div>
+    <div class="rightconcave hidden"></div>
+    <div class="hidden"><img class="car" src="{% static 'Car-Image.png' %}" alt=""></div>
+    <div class="col-lg-12 col-md-6 col-1 hidden"><p class="credo">В добрый путь ...</p></div>
 {% endblock %}
 {% block content %}
-    <div class="row justify-content-between">
-        <div class="col-2" style="margin-top: 100px">
-            <h5 class="text-center" style="color: rgb(242 0 0)">Календарь</h5>
+    <div class="row justify-content-center">
+        <div class="col-2 hidden mt-5">
+            <h5 class="text-center" style="color: #559988">Календарь</h5>
             <table id="calendar2">
                 <thead>
                 <tr>
@@ -26,24 +28,32 @@
                     <td>Вс
                 <tbody>
             </table>
-            <a href="http://www.inform.kg/" target="_blank"><img src="http://www.inform.kg/informers/currency3.php"
-                                                                 width="100%" height="150" border="0"
-                                                                 alt="Курсы валют Кыргызстана по отношению к сому"
-                                                                 title="Курсы валют Кыргызстана по отношению к сому"
-                                                                 style="margin-top: 30px"></a>
+            <a href="http://www.inform.kg/" class="hidden" target="_blank"><img
+                    src="http://www.inform.kg/informers/currency6.php"
+                    width="100%" height="150" border="0"
+                    alt="Курсы валют Кыргызстана по отношению к сому"
+                    title="Курсы валют Кыргызстана по отношению к сому"
+                    style="margin-top: 30px"></a>
         </div>
-        <div class="col-10">
-            <div class="row justify-content-between">
+        <div class="col-10 justify-content-center">
+            <div class="row justify-content-lg-start justify-content-center">
+                <a href="{% url 'webapp:index' %}?region={{ regions.all }}" class="btn region mx-3 mt-0">Все</a>
+                <button class="btn region mx-3 mt-0" type="button" data-toggle="collapse" data-target="#region"
+                        aria-controls="region" aria-expanded="false" aria-label="Toggle navigation">
+                    <span>Фильтр</span>
+                </button>
+            </div>
+            <div class="collapse row justify-content-center" id="region">
                 {% for region in regions %}
-                    <a class="btn region" href="{% url 'webapp:index' %}?region={{ region.0 }}" >{{ region.1 }}</a>
+                    <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+                       href="{% url 'webapp:index' %}?region={{ region.0 }}">{{ region.1 }}</a>
                 {% endfor %}
             </div>
             {% for announcement in announcements %}
-
-                <div class="card my-3">
+                <div class="card my-2">
                     <div class="row no-gutters">
                         <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
-                        title='Профиль - {{ announcement.author.get_full_name }}'>
+                             title='Профиль - {{ announcement.author }}'>
                             <a href="{% url 'accounts:user_detail' announcement.author.pk %}">
                                 {% if announcement.author.profile.photo %}
                                     <img src="{{ announcement.author.profile.photo.url }}" class="card-img"
@@ -54,17 +64,17 @@
                             </a>
                         </div>
                         <div class="col-md-6" data-toggle="tooltip" data-placement="top"
-                        title='Подробнее об объявлении'>
+                             title='Подробнее об объявлении'>
                             <a href="{% url 'webapp:announce_detail' announcement.pk %}">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ announcement.author.first_name }}</h5>
                                     <p class="card-text">
                                         <b>Направление</b> {{ announcement.get_place_from_display }}-{{ announcement.get_place_to_display }}
                                     </p>
+                                    {% if announcement.description %}<p class="card-text">Описание: {{ announcement.description }}</p>{% endif %}
                                     <p class="card-text">
                                         <b>Время:</b> {{ announcement.departure_time|date:'d-m-y   - H:m' }}</p>
-                                    <p class="card-text"><b>Мест:</b> {{ announcement.seats }}</p>
-
+                                    <p class="card-text"><b>Мест:</b> {{ announcement.seats }}{% if announcement.luggage %}<b class="ml-3">Багаж:</b>{{ announcement.luggage }}{% endif %}</p>
                                     {% if announcement.price %}
                                         <p class="card-text">{{ announcement.price }} сом</p>
                                     {% endif %}
@@ -72,27 +82,31 @@
                             </a>
                         </div>
                         <div class="col-md-4">
-                            <div class="card-body">
-                                <div class="row align-bottom d-inline-flex">
-                                    <div class="phone">
+                            <div class="card-body connect-block">
+                                <p class="card-text"></p>
+                                <p class="card-text"></p>
+                                <div class="row connect">
+                                    <div class="bron col-8">
+                                        {% if user not in announcement.clients.all and user.is_authenticated and user != announcement.author and announcement.status == 'active' and announcement.seats > 0 %}
+                                            <form action="{% url 'webapp:client_add' %}" method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" id="custId" name="announcement_id"
+                                                       value="{{ announcement.pk }}">
+                                                <label for="quantity" style="font-size: 12px">Кол-во:</label>
+                                                <input type="number" id="quantity" name="quantity" min="1"
+                                                       max="{{ announcement.seats }}" value="1">
+                                                <p class="d-inline-block"><input type="submit" value="Бронь"
+                                                                              class="btn links btn-success"></p>
+                                            </form>
+                                        {% elif user in announcement.clients.all %}
+                                            <a href="{% url 'webapp:client_delete' announcement.pk %}"
+                                               class="links">Отказ</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="phone col-4">
                                         <span><i class="fas fa-phone"></i></span>
                                     </div>
-                                    <div class="bron">
-                                    {% if user not in announcement.clients.all and user.is_authenticated and user != announcement.author and announcement.status == 'active' and announcement.seats > 0 %}
-                                        <form action="{% url 'webapp:client_add' %}" method="post">
-                                            {% csrf_token %}
-                                            <input type="hidden" id="custId" name="announcement_id" value="{{ announcement.pk }}">
-                                            <label for="quantity">Кол-во:</label>
-                                            <input type="number" id="quantity" name="quantity" min="1" max="{{ announcement.seats }}" value="1" >
-                                            <p class="text-center"><input type="submit" value="Бронь" class="btn user_links btn-success"></p>
-                                        </form>
-                                    {% elif user in announcement.clients.all %}
-                                        <a href="{% url 'webapp:client_delete' announcement.pk %}" class="user_links">Отказ</a>
-                                    {% endif %}
-                                    </div>
                                 </div>
-                                <p class="card-text"></p>
-                                <p class="card-text"></p>
                             </div>
                         </div>
                     </div>
@@ -102,47 +116,5 @@
     </div>
 {% endblock %}
 {% block scripts %}
-    <script>
-        function Calendar2(id, year, month) {
-            var Dlast = new Date(year, month + 1, 0).getDate(),
-                D = new Date(year, month, Dlast),
-                DNlast = new Date(D.getFullYear(), D.getMonth(), Dlast).getDay(),
-                DNfirst = new Date(D.getFullYear(), D.getMonth(), 1).getDay(),
-                calendar = '<tr>',
-                month = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
-            if (DNfirst != 0) {
-                for (var i = 1; i < DNfirst; i++) calendar += '<td>';
-            } else {
-                for (var i = 0; i < 6; i++) calendar += '<td>';
-            }
-            for (var i = 1; i <= Dlast; i++) {
-                if (i == new Date().getDate() && D.getFullYear() == new Date().getFullYear() && D.getMonth() == new Date().getMonth()) {
-                    calendar += '<td class="today">' + i;
-                } else {
-                    calendar += '<td>' + i;
-                }
-                if (new Date(D.getFullYear(), D.getMonth(), i).getDay() == 0) {
-                    calendar += '<tr>';
-                }
-            }
-            for (var i = DNlast; i < 7; i++) calendar += '<td>&nbsp;';
-            document.querySelector('#' + id + ' tbody').innerHTML = calendar;
-            document.querySelector('#' + id + ' thead td:nth-child(2)').innerHTML = month[D.getMonth()] + ' ' + D.getFullYear();
-            document.querySelector('#' + id + ' thead td:nth-child(2)').dataset.month = D.getMonth();
-            document.querySelector('#' + id + ' thead td:nth-child(2)').dataset.year = D.getFullYear();
-            if (document.querySelectorAll('#' + id + ' tbody tr').length < 6) {  // чтобы при перелистывании месяцев не "подпрыгивала" вся страница, добавляется ряд пустых клеток. Итог: всегда 6 строк для цифр
-                document.querySelector('#' + id + ' tbody').innerHTML += '<tr><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;';
-            }
-        }
-
-        Calendar2("calendar2", new Date().getFullYear(), new Date().getMonth());
-        // переключатель минус месяц
-        document.querySelector('#calendar2 thead tr:nth-child(1) td:nth-child(1)').onclick = function () {
-            Calendar2("calendar2", document.querySelector('#calendar2 thead td:nth-child(2)').dataset.year, parseFloat(document.querySelector('#calendar2 thead td:nth-child(2)').dataset.month) - 1);
-        }
-        // переключатель плюс месяц
-        document.querySelector('#calendar2 thead tr:nth-child(1) td:nth-child(3)').onclick = function () {
-            Calendar2("calendar2", document.querySelector('#calendar2 thead td:nth-child(2)').dataset.year, parseFloat(document.querySelector('#calendar2 thead td:nth-child(2)').dataset.month) + 1);
-        }
-    </script>
+    <script type="application/javascript" src="{% static "js/calendar.js" %}"></script>
 {% endblock %}

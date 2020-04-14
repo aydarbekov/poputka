@@ -5,16 +5,16 @@
 {% block title %}{{ user_obj.username }}{% endblock %}
 {% block extra_class %} header{% endblock %}
 {% block content %}
-    <div class="card my-3" style="border-color: #C60054">
+    <div class="card my-3 user_card">
         <div class="row no-gutters">
-            <div class="card-img col-md-2">
+            <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
+                 title='Профиль - {{ user_obj.username }}'>
                 {% if user_obj.profile.photo %}
                     <img src="{{ user_obj.profile.photo.url }}" class="card-img"
                          alt="Author photo">
                 {% else %}
                     <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
                 {% endif %}
-                <p class="mt-2 ml-3" style="color: #C60054">Профиль: {{ user_obj.username }}</p>
             </div>
             <div class="col-md-5">
                 <div class="card-body">
@@ -45,36 +45,56 @@
         {% if user_obj == request.user %}
             <a href="{% url 'accounts:user_update' user_obj.pk %}" class="user_links">Изменить</a>
             <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
-            <a href="{% url 'accounts:user_change_password' user_obj.pk %}" class="user_links" >Изменить пароль</a>
+            <a href="{% url 'accounts:user_change_password' user_obj.pk %}" class="user_links">Изменить пароль</a>
         {% endif %}
     </div>
     {% if user_obj == user %}
-        <h4>История поездок</h4>
+        <h4 class="mt-5">История поездок</h4>
         {% for announcement in history %}
-            <div class="card my-3">
+            <div class="card my-2">
                 <div class="row no-gutters">
-                    <div class="card-img col-md-2">
-                        {% if announcement.author.profile.photo %}
-                            <img src="{{ announcement.author.profile.photo.url }}" class="card-img"
-                                 alt="Author photo">
-                        {% else %}
-                            <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
-                        {% endif %}
+                    <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
+                         title='Профиль - {{ announcement.author }}'>
+                        <a href="{% url 'accounts:user_detail' announcement.author.pk %}">
+                            {% if announcement.author.profile.photo %}
+                                <img src="{{ announcement.author.profile.photo.url }}" class="card-img"
+                                     alt="Author photo">
+                            {% else %}
+                                <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
+                            {% endif %}
+                        </a>
                     </div>
-                    <div class="col-md-5">
-                        <p class="card-text">Автор: <a
-                                href="{% url 'accounts:user_detail' announcement.author.pk %}">{{ announcement.author }}</a>
-                        </p>
-                        <p class="card-text">
-                            <b>Направление</b> {{ announcement.get_place_from_display }}-{{ announcement.get_place_to_display }}
-                        </p>
-                        <p class="card-text">
-                            <b>Время:</b> {{ announcement.departure_time|date:'d-m-y   - H:m' }}</p>
-                        <p class="card-text">Описание: {{ announcement.description }}</p>
+                    <div class="col-md-6" data-toggle="tooltip" data-placement="top"
+                         title='Подробнее об объявлении'>
+                        <a href="{% url 'webapp:announce_detail' announcement.pk %}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ announcement.author.first_name }}</h5>
+                                <p class="card-text">
+                                    <b>Направление</b> {{ announcement.get_place_from_display }}-{{ announcement.get_place_to_display }}
+                                </p>
+                                {% if announcement.description %}
+                                    <p class="card-text">Описание: {{ announcement.description }}</p>{% endif %}
+                                <p class="card-text">
+                                    <b>Время:</b> {{ announcement.departure_time|date:'d-m-y   - H:m' }}</p>
+                                <p class="card-text"><b>Мест:</b>
+                                    {{ announcement.seats }}{% if announcement.luggage %}<b class="ml-3">Багаж:</b>
+                                        {{ announcement.luggage }}{% endif %}</p>
+                                {% if announcement.price %}
+                                    <p class="card-text">{{ announcement.price }} сом</p>
+                                {% endif %}
+                            </div>
+                        </a>
                     </div>
-                    <div class="col-md-5">
-                        <p class="card-text">Места: {{ announcement.seats }}</p>
-                        <p class="card-text">Багаж: {{ announcement.luggage }}</p>
+                    <div class="col-md-3">
+                        <div class="card-body">
+                            {% if user == announcement.author and announcement.clients.all %}
+                                <p class="card-text"><b>Клиенты:</b>
+                                    {% for client in announcement.clients.all %}
+                                        <a href="{% url 'accounts:user_detail' client.pk %}">{{ client }}</a>
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -88,10 +108,10 @@
                             <input type="number" id="quantity" name="quantity" min="1" max="{{ announcement.seats }}"
                                    value="1">
                             <p class="text-center"><input type="submit" value="Бронь"
-                                                          class="btn user_links btn-success"></p>
+                                                          class="btn links btn-success"></p>
                         </form>
                     {% elif user in announcement.clients.all %}
-                        <a href="{% url 'webapp:client_delete' announcement.pk %}" class="user_links">Отказ</a>
+                        <a href="{% url 'webapp:client_delete' announcement.pk %}" class="links">Отказ</a>
                     {% endif %}
                 </div>
                 {% if announcement.author == user %}
@@ -101,7 +121,7 @@
                     <a href="{% url 'webapp:announce_delete' announcement.pk %}" class="announce_links">Удалить</a>
                 {% endif %}
             </div>
-            {% if user_obj != announcement.author and announcement.status == 'completed'%}
+            {% if user_obj != announcement.author and announcement.status == 'completed' %}
                 <div class="my-5">
                     <form action="{% url 'webapp:review_create' announcement.pk %}" method="POST">
                         {% csrf_token %}
@@ -128,29 +148,30 @@
         {% endfor %}
     {% endif %}
     <div class="reviews-list mt-5">
-        <h4>Отзывы</h4>
         {% for announce in user_obj.announcement.all %}
             {% for review in announce.reviews.all %}
-                <div class="row comment">
-                    <div class="col-2">
-                        {% if review.author.profile.photo %}
-                            <img src="{{ review.author.profile.photo.url }}"
-                                 alt="Author photo">
-                        {% else %}
-                            <img src="{% static 'No_person-1.jpg' %}" alt="No photo">
-                        {% endif %}
-                        <p>{{ review.author }}. Cоздана: {{ review.date|date:'d.m.Y' }}</p>
-                        {% for i in review.grade|times %}
-                            <div class="d-inline-block">
-                                <i class=" fas fa-star" style="position: relative"></i>
-                            </div>
-                        {% endfor %}
+                {% if review %}
+                    <h4>Отзывы</h4>
+                    <div class="row comment">
+                        <div class="col-2">
+                            {% if review.author.profile.photo %}
+                                <img src="{{ review.author.profile.photo.url }}"
+                                     alt="Author photo">
+                            {% else %}
+                                <img src="{% static 'No_person-1.jpg' %}" alt="No photo">
+                            {% endif %}
+                            <p>{{ review.author }}. Cоздана: {{ review.date|date:'d.m.Y' }}</p>
+                            {% for i in review.grade|times %}
+                                <div class="d-inline-block">
+                                    <i class=" fas fa-star" style="position: relative"></i>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-10 review_text">{{ review.text }}</div>
+                        <p class="comment-links">
+                        </p>
                     </div>
-                    <div class="col-10 review_text">{{ review.text }}</div>
-                    <p class="comment-links">
-                        {#                    <a href="{% url 'webapp:comment_update' comment.pk %}">Edit</a>#}
-                    </p>
-                </div>
+                {% endif %}
             {% empty %}
 
                 <p>Отзывов нет</p>
