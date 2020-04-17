@@ -32,10 +32,10 @@ class Announcements(models.Model):
     departure_time = models.DateTimeField(verbose_name='Когда')
     seats = models.IntegerField(verbose_name='Количество мест')
     luggage = models.CharField(null=True, blank=True, max_length=100, verbose_name='Багаж')
-    car = models.ForeignKey('Car', on_delete=models.SET_NULL, null=True, blank=True, related_name='profile',
+    car = models.ForeignKey('Car', on_delete=models.SET_NULL, null=True, blank=True, related_name='announcement',
                             verbose_name='Марка авто')
-    car_model = models.ForeignKey('CarModel', on_delete=models.SET_NULL, null=True, blank=True, related_name='profile',
-                                  verbose_name='Модель авто')
+    car_model = models.ForeignKey('CarModel', on_delete=models.SET_NULL, null=True, blank=True,
+                                  related_name='announcement', verbose_name='Модель авто')
     price = models.IntegerField(null=True, blank=True, verbose_name='Цена')
     photo = models.ImageField(upload_to='ads_photo', null=True, blank=True, verbose_name='Фото')
     status = models.CharField(max_length=50, choices=ANNOUNCEMENT_STATUS_CHOICES, verbose_name='Статус')
