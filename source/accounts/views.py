@@ -37,13 +37,15 @@ class SignUp(CreateView):
         self.prof = form2.save(commit=False)
         self.prof.user = self.object
         self.prof.save()
-        return HttpResponseRedirect(self.get_success_url())
+        login(self.request, self.object)
+        return HttpResponseRedirect(reverse('accounts:user_detail', kwargs={"pk": self.object.pk}))
 
     def form_invalid(self, form, form2):
         return self.render_to_response(self.get_context_data(form=form, form2=form2))
 
     def get_success_url(self):
-        return reverse('accounts:user_detail', kwargs={'pk': self.object.pk})
+        login(self.request, self.object)
+        return HttpResponseRedirect(reverse('accounts:user_detail', kwargs={"pk": self.object.pk}))
 
 
 class UserDetailView(DetailView):
