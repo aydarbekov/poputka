@@ -37,6 +37,7 @@
                     <p>Тип: {{ announce.author.profile.type }}</p>
                     {% if announce.author.profile.type == 'driver' %}
                         <p>Статус: {{ announce.author.profile.status }}</p>
+                        <p>Марка авто: {{ announce.author.profile.car }}</p>
                         <p>Модель авто: {{ announce.author.profile.car_model }}</p>
                         <p>Номер авто: {{ announce.author.profile.car_number }}</p>
                         <p>Кол-во сидений: {{ announce.author.profile.car_seats }}</p>

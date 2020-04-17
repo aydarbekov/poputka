@@ -86,6 +86,15 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
         self.object = form.save(commit=False)
         self.object.status = 'active'
         self.object.author = self.request.user
+        user = self.request.user
+        user.profile.type = form.cleaned_data['type']
+        user.profile.car = form.cleaned_data['car']
+        user.profile.car_model = form.cleaned_data['car_model']
+        print(user.profile.type)
+        print(form.cleaned_data['type'], "THIS IS TYPE FORM")
+        print(form.cleaned_data['car'], "THIS IS CAR FORM")
+        print(form.cleaned_data['car_model'], "THIS IS CAR_MODEL FORM")
+        user.profile.save()
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
