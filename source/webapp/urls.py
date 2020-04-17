@@ -3,9 +3,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 from accounts.views import SignUp, UserDetailView
 from webapp.views import IndexView, AnnounceCreateView, AnnounceDetailView, AnnounceUpdateView, AnnounceDeleteView, \
     PassengersList, DriversList, ClientAddView, ClientDeleteView, ReviewCreateView
-
+from rest_framework import routers
+router = routers.DefaultRouter()
 app_name = 'webapp'
-
+# router.register(r'users', views.UserViewSet)
+# router.register(r'^ajax/categ/$', 'proj.list.views.feeds_subcat')
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('passengers/', PassengersList.as_view(), name="passengers_list"),
