@@ -83,8 +83,9 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
             return context
 
     def form_valid(self, form):
-        self.object = form.save(commit=True)
+        self.object = form.save(commit=False)
         self.object.status = 'active'
+        self.object.author = self.request.user
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
