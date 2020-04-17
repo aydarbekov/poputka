@@ -75,6 +75,7 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
     # form_class = AnnounceCreationForm
     fields = ['type', 'description', 'place_from', 'place_to', 'departure_time', 'seats', 'luggage', 'price',
             'photo']
+
     # clients = models.ManyToManyField('auth.User', null=True, blank=True, related_name='clients',
     #                                  verbose_name='Клиенты')
 

@@ -41,7 +41,7 @@ function hide(type) {       //Создаем функцию прятания п�
     departure_time.hidden = false;
     seats.hidden = false;
     luggage.hidden = false;
-    price.hidden = true;
+    price.hidden = false;
     photo.hidden = true;
   } else if (type === "driver"){
     description.hidden = false;
