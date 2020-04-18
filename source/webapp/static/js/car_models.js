@@ -1,6 +1,6 @@
 function ajax_car(car_id){              //Функция аякс запроса, принимает айди марки авто
  $.ajax({
-    url: 'http://localhost:8000/api/v1/cars/'+car_id+'/',       //юрл меняем в зависимости айди марки авто
+    url: 'http://185.146.157.20:1337/api/v1/cars/'+car_id+'/',       //юрл меняем в зависимости айди марки авто
     method: 'GET',
     success: function(response, status) {
 		models = response.car.model;                        // сохраняем модели принятой марки
