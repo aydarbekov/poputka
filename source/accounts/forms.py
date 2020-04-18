@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
+from django.forms import TextInput
+
 from accounts.models import Profiles
 
 
@@ -10,6 +12,10 @@ class SignUpForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         fields = ('username', 'first_name', 'last_name', 'email')
+        labels = {
+            'username': 'Имя пользователя'
+        }
+
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -24,12 +30,18 @@ class UpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']
+        labels = {
+            'username': 'Имя пользователя'
+        }
 
 
 class ProfileForm_2(forms.ModelForm):
     class Meta:
         model = Profiles
         exclude = ['user']
+        widgets = {
+            'mobile_phone': TextInput(attrs={'placeholder': 'Моб. номер в формате +996555123456'}),
+        }
 
 
 class UserChangePasswordForm(forms.ModelForm):

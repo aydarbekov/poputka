@@ -37,13 +37,15 @@ class SignUp(CreateView):
         self.prof = form2.save(commit=False)
         self.prof.user = self.object
         self.prof.save()
-        return HttpResponseRedirect(self.get_success_url())
+        login(self.request, self.object)
+        return HttpResponseRedirect(reverse('accounts:user_detail', kwargs={"pk": self.object.pk}))
 
     def form_invalid(self, form, form2):
         return self.render_to_response(self.get_context_data(form=form, form2=form2))
 
     def get_success_url(self):
-        return reverse('accounts:user_detail', kwargs={'pk': self.object.pk})
+        login(self.request, self.object)
+        return HttpResponseRedirect(reverse('accounts:user_detail', kwargs={"pk": self.object.pk}))
 
 
 class UserDetailView(DetailView):
@@ -81,7 +83,6 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         self.profile = Profiles.objects.get(pk=self.object.profile.pk)
         form = self.get_form()
         form2 = self.second_form_class(request.POST, self.request.FILES, instance=self.profile)
-
         if form.is_valid() and form2.is_valid():
             return self.form_valid(form, form2)
         return self.form_invalid(form, form2)
@@ -89,9 +90,23 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
     def form_valid(self, form, form2):
         self.object = form.save(commit=True)
         self.object.save()
+
+        if form2.cleaned_data['type'] == 'client':
+            print('ddddddddd')
+            print(form2.cleaned_data['car'])
+            form2.cleaned_data['car'] = None
+            print(form2.cleaned_data['car'])
+
+            form2.cleaned_data['car_model'] = None
+            form2.cleaned_data['car_number'] = None
+            form2.cleaned_data['car_seats'] = None
+            form2.cleaned_data['status'] = None
+            form2.save()
+
         self.profile = form2.save(commit=True)
-        profile = form2.save(commit=True)
-        profile.save()
+        self.profile.save()
+        print(form2.cleaned_data['car'])
+
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form, form2):

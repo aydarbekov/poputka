@@ -1,5 +1,5 @@
 from django import forms
-from webapp.models import Review
+from webapp.models import Review, Announcements
 
 
 class ReviewForm(forms.ModelForm):
@@ -9,3 +9,10 @@ class ReviewForm(forms.ModelForm):
         model = Review
         fields = ['text']
 
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcements
+        fields = ['type', 'description', 'place_from', 'place_to', 'departure_time', 'car', 'car_model', 'seats',
+                  'luggage', 'price',
+                  'photo']

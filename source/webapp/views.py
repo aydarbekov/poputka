@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from webapp.forms import ReviewForm
+from webapp.forms import ReviewForm, AnnouncementForm
 from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES, \
     ClientsInAnnounce, CarModel, Car, Review
 from django.views.generic.base import View
@@ -70,41 +70,56 @@ class IndexView(ListView):
 
 
 class AnnounceCreateView(LoginRequiredMixin, CreateView):
-    model = Announcements
+    form_class = AnnouncementForm
     template_name = 'announce_create.html'
     # form_class = AnnounceCreationForm
-    fields = ['type', 'description', 'place_from', 'place_to', 'departure_time', 'seats', 'luggage', 'price',
-            'photo']
-    # clients = models.ManyToManyField('auth.User', null=True, blank=True, related_name='clients',
-    #                                  verbose_name='Клиенты')
 
-    # def get_form_kwargs(self):
-    #     print(self.request.user)
-    #     kwargs = super().get_form_kwargs()
-    #     kwargs['author'] = self.request.user
-    #     return kwargs
+    def get_context_data(self, **kwargs):
+        context = super(AnnounceCreateView, self).get_context_data(**kwargs)
+        try:
+            context['form'] = self.form_class(initial={'car': self.request.user.profile.car, 'car_model': self.request.user.profile.car_model})
+            return context
+        except:
+            return context
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        user = self.request.user
-        # mobile_phone = form.cleaned_data['mobile_phone']
-        self.object.departure_time = form.cleaned_data['departure_time']
-        self.object.seats = form.cleaned_data['seats']
-        self.object.luggage = form.cleaned_data['luggage']
-        self.object.place_from = form.cleaned_data['place_from']
-        self.object.place_to = form.cleaned_data['place_to']
-        self.object.price = form.cleaned_data['price']
-        self.object.type = form.cleaned_data['type']
-        self.object.description = form.cleaned_data['description']
-        self.object.photo = form.cleaned_data['photo']
         self.object.status = 'active'
-        # if mobile_phone:
-        #     self.object.mobile_phone = mobile_phone
-        # else:
-        #     self.object.phone = self.request.user.profile.phone_number
-        self.object.author = user
+        self.object.author = self.request.user
+        user = self.request.user
+        user.profile.type = form.cleaned_data['type']
+        user.profile.car = form.cleaned_data['car']
+        user.profile.car_model = form.cleaned_data['car_model']
+        print(user.profile.type)
+        print(form.cleaned_data['type'], "THIS IS TYPE FORM")
+        print(form.cleaned_data['car'], "THIS IS CAR FORM")
+        print(form.cleaned_data['car_model'], "THIS IS CAR_MODEL FORM")
+        user.profile.save()
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+    # def form_valid(self, form):
+    #     self.object = form.save(commit=False)
+    #     user = self.request.user
+    #     # mobile_phone = form.cleaned_data['mobile_phone']
+    #     self.object.departure_time = form.cleaned_data['departure_time']
+    #     self.object.seats = form.cleaned_data['seats']
+    #     self.object.luggage = form.cleaned_data['luggage']
+    #     self.object.place_from = form.cleaned_data['place_from']
+    #     self.object.place_to = form.cleaned_data['place_to']
+    #     self.object.price = form.cleaned_data['price']
+    #     self.object.type = form.cleaned_data['type']
+    #     self.object.description = form.cleaned_data['description']
+    #     self.object.photo = form.cleaned_data['photo']
+    #     self.object.status = 'active'
+    #     # if mobile_phone:
+    #     #     self.object.mobile_phone = mobile_phone
+    #     # else:
+    #     #     self.object.phone = self.request.user.profile.phone_number
+    #     self.object.author = user
+    #     self.object.save()
+    #     return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse('webapp:index')

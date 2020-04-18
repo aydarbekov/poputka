@@ -24,6 +24,13 @@ price = price_child.parentNode;
 photo_child = document.getElementById("id_photo");
 photo = photo_child.parentNode;
 
+car_child = document.getElementById("id_car");    //Находим поле марки авто
+car_mark = car_child.parentNode;
+
+car_model_child = document.getElementById("id_car_model");
+car_model = car_model_child.parentNode;
+
+
 description.hidden = true;
 place_from.hidden = true;
 place_to.hidden = true;
@@ -32,6 +39,8 @@ seats.hidden = true;
 luggage.hidden = true;
 price.hidden = true;
 photo.hidden = true;
+car_mark.hidden = true;
+car_model.hidden = true;
 
 function hide(type) {       //Создаем функцию прятания полей, принимает тип обьявления
   if (type === "client" ) {
@@ -41,7 +50,9 @@ function hide(type) {       //Создаем функцию прятания п�
     departure_time.hidden = false;
     seats.hidden = false;
     luggage.hidden = false;
-    price.hidden = true;
+    price.hidden = false;
+    car_mark.hidden = true;
+    car_model.hidden = true;
     photo.hidden = true;
   } else if (type === "driver"){
     description.hidden = false;
@@ -52,6 +63,9 @@ function hide(type) {       //Создаем функцию прятания п�
     luggage.hidden = false;
     price.hidden = false;
     photo.hidden = false;
+    car_mark.hidden = false;
+    car_model.hidden = false;
+
   } else if (type === ''){
     description.hidden = true;
     place_from.hidden = true;
@@ -61,6 +75,9 @@ function hide(type) {       //Создаем функцию прятания п�
     luggage.hidden = true;
     price.hidden = true;
     photo.hidden = true;
+    car_mark.hidden = true;
+    car_model.hidden = true;
+
   }
 }
 type.addEventListener('change', function(){hide(type.value)});      //Создаем листенер для типа, если
