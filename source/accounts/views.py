@@ -1,12 +1,26 @@
+from pyexpat.errors import messages
+
 from django.contrib.auth import login
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
+
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2, UserChangePasswordForm
-from accounts.models import Profiles
+from accounts.models import User, Profiles
 from webapp.forms import ReviewForm
+
+
+class LoginView(LoginView):
+
+    def get_success_url(self):
+        # print(self.request.user)
+        # print(self.request.user.profile.ban)
+        if self.request.user.profile.ban == True:
+            raise PermissionDenied("Вы получили бан, доступ к сайту запрещен!")
+        return super().get_success_url()
 
 
 class SignUp(CreateView):
@@ -93,10 +107,10 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         self.object.save()
 
         if form2.cleaned_data['type'] == 'client':
-            print('ddddddddd')
-            print(form2.cleaned_data['car'])
+            # print('ddddddddd')
+            # print(form2.cleaned_data['car'])
             form2.cleaned_data['car'] = None
-            print(form2.cleaned_data['car'])
+            # print(form2.cleaned_data['car'])
 
             form2.cleaned_data['car_model'] = None
             form2.cleaned_data['car_number'] = None

@@ -1,6 +1,7 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from webapp.models import Car, CarModel
+from django.contrib.auth.models import User
 
 DRIVER_STATUS_CHOICES = (
     ('free', 'Свободен'),
@@ -14,7 +15,7 @@ PROFILE_TYPE_CHOICES = (
 
 
 class Profiles(models.Model):
-    user = models.OneToOneField('auth.User', related_name='profile', on_delete=models.CASCADE, verbose_name='Профиль')
+    user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE, verbose_name='Профиль')
     type = models.CharField(max_length=20, choices=PROFILE_TYPE_CHOICES, verbose_name='Тип')
     mobile_phone = PhoneNumberField(max_length=20, verbose_name='Мобильный телефон')
     country = models.CharField(max_length=30, null=True, blank=True, verbose_name='Страна')
