@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import TextInput
-
 from accounts.models import Profiles
 
 
@@ -15,7 +14,6 @@ class SignUpForm(UserCreationForm):
         labels = {
             'username': 'Имя пользователя'
         }
-
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -38,7 +36,7 @@ class UpdateForm(forms.ModelForm):
 class ProfileForm_2(forms.ModelForm):
     class Meta:
         model = Profiles
-        exclude = ['user']
+        exclude = ['user', 'ban']
         widgets = {
             'mobile_phone': TextInput(attrs={'placeholder': 'Моб. номер в формате +996555123456'}),
         }

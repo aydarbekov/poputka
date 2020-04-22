@@ -1,0 +1,8 @@
+{% load static %}
+{% if exception %}
+    <div style="display: flex; justify-content: center; align-items: center; height: 50%">
+    <div style="color: red; font-size: 2rem">{{ exception }}</div>
+    </div>
+{% else %}
+  <p>Static generic message</p>
+{% endif %}

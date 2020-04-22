@@ -5,7 +5,6 @@ from django.http import JsonResponse
 from phonenumber_field.phonenumber import to_python, PhoneNumber
 from rest_framework import serializers
 from rest_framework.response import Response
-
 from accounts import models
 from accounts.models import Profiles
 from webapp.models import Announcements, Car, CarModel, ClientsInAnnounce
