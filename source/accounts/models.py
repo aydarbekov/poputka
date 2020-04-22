@@ -1,6 +1,5 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-
 from webapp.models import Car, CarModel
 
 DRIVER_STATUS_CHOICES = (
@@ -27,6 +26,7 @@ class Profiles(models.Model):
     car_seats = models.IntegerField(null=True, blank=True, verbose_name='Количество мест')
     notification = models.BooleanField(default=True, verbose_name='Уведомления')
     photo = models.ImageField(upload_to='users_photo', null=True, blank=True, verbose_name='Фото')
+    ban = models.BooleanField(default=False, verbose_name="Бан")
 
     def __str__(self):
         return self.user.first_name
