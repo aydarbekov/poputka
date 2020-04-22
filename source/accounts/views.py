@@ -1,9 +1,7 @@
-from pyexpat.errors import messages
-
+from django.db.models import Q
 from django.contrib.auth import login
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
-
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
@@ -161,7 +159,7 @@ class UserDeleteView(UserPassesTestMixin, DeleteView):
         return self.get_object() == self.request.user
 
 
-class UserListView(ListView):
+class UserListView(UserPassesTestMixin, ListView):
     model = User
     template_name = 'user_list.html'
     context_object_name = 'users'
@@ -169,9 +167,18 @@ class UserListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['drivers'] = Profiles.objects.filter(type='driver')
-        print(Profiles.objects.filter(type='driver'))
+        context['clients'] = Profiles.objects.filter(type='client')
         return context
 
-    # def test_func(self):
-    #     user = self.request.user
-    #     return user.is_staff or user.groups.filter(name='principal_staff')
+    def get_queryset(self, *args, **kwargs):
+        drivers = self.request.GET.get('drivers')
+        clients = self.request.GET.get('clients')
+        if drivers:
+            return Profiles.objects.filter(Q(type='driver'))
+        elif clients:
+            return Profiles.objects.filter(Q(type='client'))
+        return User.objects.all
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff

@@ -5,10 +5,15 @@
 {% endblock %}
 {% block content %}
     <h1>Пользователи</h1>
-{#    <div class="row justify-content-center">#}
-{#        <a href="{% url 'accounts:user_list' %}?users={{ drivers.all }}" class="btn region mx-3 mt-0">Водители</a>#}
-{#    </div>#}
-    {% for user_obj in users%}
+    <div class="row justify-content-center" id="users_list">
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}">Все</a>
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}?drivers={{ drivers }}">Водители</a>
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}?clients={{ clients }}">Клиенты</a>
+    </div>
+    {% for user_obj in users %}
         <div class="card my-3 user_card">
             <div class="row no-gutters">
                 <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
@@ -46,8 +51,8 @@
             </div>
         </div>
         <div class="row justify-content-center">
-                <a href="{% url 'accounts:user_update' user_obj.pk %}" class="user_links">Изменить</a>
-                <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
+            <a href="{% url 'accounts:user_update' user_obj.pk %}" class="user_links">Изменить</a>
+            <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
         </div>
     {% endfor %}
 {% endblock %}
