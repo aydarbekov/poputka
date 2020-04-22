@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView
 from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2, UserChangePasswordForm
 from accounts.models import Profiles
 from webapp.forms import ReviewForm
@@ -144,3 +144,19 @@ class UserDeleteView(UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         return self.get_object() == self.request.user
+
+
+class UserListView(ListView):
+    model = User
+    template_name = 'user_list.html'
+    context_object_name = 'users'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['drivers'] = Profiles.objects.filter(type='driver')
+        print(Profiles.objects.filter(type='driver'))
+        return context
+
+    # def test_func(self):
+    #     user = self.request.user
+    #     return user.is_staff or user.groups.filter(name='principal_staff')

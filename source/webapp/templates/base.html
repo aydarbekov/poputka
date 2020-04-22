@@ -44,6 +44,7 @@
                     {% block menu %}{% endblock %}
                 </ul>
                 <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:user_list' %}">Список пользователей</a></li>
                     {% if request.user.is_authenticated %}
                         <li class="nav-item" style="color: darkblue;"><a class="nav-link"
                                                                          href="{% url 'accounts:user_detail' request.user.pk %}">Приветствую, {{ request.user }}!</a>

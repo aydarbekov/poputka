@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block extra_class %} header{% endblock %}
+{% block menu %}
+{% endblock %}
+{% block content %}
+    <h1>Пользователи</h1>
+{#    <div class="row justify-content-center">#}
+{#        <a href="{% url 'accounts:user_list' %}?users={{ drivers.all }}" class="btn region mx-3 mt-0">Водители</a>#}
+{#    </div>#}
+    {% for user_obj in users%}
+        <div class="card my-3 user_card">
+            <div class="row no-gutters">
+                <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
+                     title='Профиль - {{ user_obj.username }}'>
+                    {% if user_obj.profile.photo %}
+                        <img src="{{ user_obj.profile.photo.url }}" class="card-img"
+                             alt="Author photo">
+                    {% else %}
+                        <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
+                    {% endif %}
+                </div>
+                <div class="col-md-5">
+                    <div class="card-body">
+                        <p>Имя: <b>{{ user_obj.first_name }}</b></p>
+                        <p>Фамилия: {{ user_obj.last_name }}</p>
+                        <p>Страна: {{ user_obj.profile.country }}</p>
+                        <p>Город: {{ user_obj.profile.city }}</p>
+                        <p>Почта: {{ user_obj.email }}</p>
+                        <p>Телефон: {{ user_obj.profile.mobile_phone }}</p>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="card-body">
+                        <p>Тип: {{ user_obj.profile.type }}</p>
+                        <p>Уведомления: {{ user_obj.profile.notification }}</p>
+                        {% if user_obj.profile.type == 'driver' %}
+                            <p>Статус: {{ user_obj.profile.status }}</p>
+                            <p>Авто: {{ user_obj.profile.car }}</p>
+                            <p>Модель авто: {{ user_obj.profile.car_model }}</p>
+                            <p>Номер авто: {{ user_obj.profile.car_number }}</p>
+                            <p>Кол-во сидений: {{ user_obj.profile.car_seats }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+                <a href="{% url 'accounts:user_update' user_obj.pk %}" class="user_links">Изменить</a>
+                <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
+        </div>
+    {% endfor %}
+{% endblock %}
