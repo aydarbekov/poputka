@@ -75,6 +75,7 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         if 'form' not in context:
             context['form'] = self.form_class(instance=self.object)
         if 'form2' not in context:
+            Profiles.objects.get_or_create(user=self.object)
             context['form2'] = self.second_form_class(instance=self.object.profile)
         return context
 
