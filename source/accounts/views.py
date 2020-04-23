@@ -168,7 +168,8 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         user_requesting = self.request.user
-        return user_requesting.is_staff or self.get_object() == self.request.user
+        return user_requesting.is_staff or user_requesting.groups.filter(name='administrators') \
+               or self.get_object() == self.request.user
 
 
 class UserPasswordChangeView(UserPassesTestMixin, UpdateView):
@@ -195,7 +196,9 @@ class UserDeleteView(UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('webapp:index')
 
     def test_func(self):
-        return self.get_object() == self.request.user
+        user_requesting = self.request.user
+        return user_requesting.is_staff or user_requesting.groups.filter(name='administrators') \
+               or self.get_object() == self.request.user
 
 
 class UserListView(UserPassesTestMixin, ListView):
