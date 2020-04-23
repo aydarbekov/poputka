@@ -5,7 +5,7 @@ from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView, FormView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView, FormView, View
 from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2, UserChangePasswordForm, FullSearchForm
 from accounts.models import User, Profiles
 from webapp.forms import ReviewForm
@@ -18,9 +18,25 @@ class LoginView(LoginView):
     def get_success_url(self):
         # print(self.request.user)
         # print(self.request.user.profile.ban)
+        Profiles.objects.get_or_create(user=self.request.user)
         if self.request.user.profile.ban == True:
             raise PermissionDenied("Вы получили бан, доступ к сайту запрещен!")
         return super().get_success_url()
+
+
+class BanChangeView(View):
+    def post(self, *args, **kwargs):
+        user = User.objects.get(pk=kwargs['pk'])
+        Profiles.objects.get_or_create(user=user)
+        print(user)
+        print(user.profile.ban)
+        if user.profile.ban:
+            user.profile.ban = False
+        else:
+            user.profile.ban = True
+        print(user.profile.ban)
+        user.profile.save()
+        return redirect('accounts:user_list')
 
 
 class SignUp(CreateView):
@@ -165,7 +181,7 @@ class UserListView(UserPassesTestMixin, ListView):
     model = User
     template_name = 'user_list.html'
     context_object_name = 'users'
-    paginate_by = 2
+    paginate_by = 5
     paginate_orphans = 1
 
     def get_context_data(self, *, object_list=None, **kwargs):
