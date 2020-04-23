@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load static %}
+{% load auth_extras %}
 {% block extra_class %} header{% endblock %}
 {% block menu %}
 {% endblock %}
@@ -39,7 +40,8 @@
                     <div class="card-body">
                         <p>Тип: {{ user_obj.profile.type }}</p>
                         <p>Уведомления: {{ user_obj.profile.notification }}</p>
-                        <p>Бан: {{ user_obj.profile.ban }}</p>
+{#                        <p>Бан: {{ user_obj.profile.ban }}</p>#}
+                        <p>Бан: {{ user_obj|has_group:'banned' }}</p>
                         {% if user_obj.profile.type == 'driver' %}
                             <p>Статус: {{ user_obj.profile.status }}</p>
                             <p>Авто: {{ user_obj.profile.car }}</p>
@@ -56,8 +58,10 @@
             <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
             <form action="{% url 'accounts:ban_change' user_obj.pk %}" method="post">
                 {% csrf_token %}
-                <p><input type="submit" value="{% if user_obj.profile.ban %} Разбанить {% else %} Забанить {% endif %}"
-                          class="btn links btn-success "></p>
+                <input type="submit" value="{% if user_obj|has_group:'banned' %} Разбанить {% else %} Забанить {% endif %}"
+                          class="ban btn btn-success ">
+{#                <input type="submit" value="{% if user_obj.profile.ban %} Разбанить {% else %} Забанить {% endif %}"#}
+{#                          class="ban btn btn-success ">#}
             </form>
         </div>
     {% endfor %}

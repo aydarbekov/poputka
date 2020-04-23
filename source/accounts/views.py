@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.db.models import Q
 from django.contrib.auth import login
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -19,9 +20,13 @@ class LoginView(LoginView):
         # print(self.request.user)
         # print(self.request.user.profile.ban)
         Profiles.objects.get_or_create(user=self.request.user)
-        if self.request.user.profile.ban == True:
-            raise PermissionDenied("Вы получили бан, доступ к сайту запрещен!")
-            auth_logout(request)
+        # print(self.request.user.groups)
+        # print(self.request.user.groups.filter(name="banned"))
+        # print(self.request.user.groups.filter(name="banned").exists())
+        # print(self.request.user)
+        # if self.request.user.ban:
+        if self.request.user.groups.filter(name="banned").exists():
+            raise PermissionDenied("Вы получили бан, доступ к сайту ограничен!")
         return super().get_success_url()
 
 
@@ -29,15 +34,29 @@ class BanChangeView(View):
     def post(self, *args, **kwargs):
         user = User.objects.get(pk=kwargs['pk'])
         Profiles.objects.get_or_create(user=user)
-        print(user)
-        print(user.profile.ban)
-        if user.profile.ban:
-            user.profile.ban = False
+        group = Group.objects.get(name='banned')
+        # print("БЫЛО", user.groups.filter(name="banned").exists())
+        if user.groups.filter(name="banned").exists():
+            user.groups.remove(group)
+            # print("BAAN", user.groups.filter(name="banned").exists())
         else:
-            user.profile.ban = True
-        print(user.profile.ban)
-        user.profile.save()
+            user.groups.add(group)
+            # print("MERCY", user.groups.filter(name="banned").exists())
         return redirect('accounts:user_list')
+
+# class BanChangeView(View):
+#     def post(self, *args, **kwargs):
+#         user = User.objects.get(pk=kwargs['pk'])
+#         Profiles.objects.get_or_create(user=user)
+#         print(user)
+#         print(user.profile.ban)
+#         if user.profile.ban:
+#             user.profile.ban = False
+#         else:
+#             user.profile.ban = True
+#         print(user.profile.ban)
+#         user.profile.save()
+#         return redirect('accounts:user_list')
 
 
 class SignUp(CreateView):
