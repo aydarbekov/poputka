@@ -209,15 +209,19 @@ class UserListView(UserPassesTestMixin, ListView):
         context = super().get_context_data()
         context['drivers'] = Profiles.objects.filter(type='driver')
         context['clients'] = Profiles.objects.filter(type='client')
+        # context['drivers'] = Profiles.objects.filter(type='driver')
+        # context['clients'] = Profiles.objects.filter(type='client')
         return context
 
     def get_queryset(self, *args, **kwargs):
         drivers = self.request.GET.get('drivers')
+        # print(self.request.GET.get('drivers'))
         clients = self.request.GET.get('clients')
+        # print(self.request.GET.get('clients'))
         if drivers:
-            return Profiles.objects.filter(Q(type='driver'))
+            return User.objects.all().filter(Q(profile__type='driver'))
         elif clients:
-            return Profiles.objects.filter(Q(type='client'))
+            return User.objects.all().filter(Q(profile__type='client'))
         return User.objects.all()
 
     def test_func(self):
