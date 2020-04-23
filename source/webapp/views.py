@@ -146,6 +146,7 @@ class AnnounceUpdateView(LoginRequiredMixin, UpdateView):
     context_object_name = 'announce'
 
     def dispatch(self, request, *args, **kwargs):
+        print("Entered")
         if not request.user.is_authenticated:
             return self.handle_no_permission()
         if self.request.user.groups.filter(name="banned").exists():
