@@ -33,13 +33,13 @@
                         <p>Город: {{ user_obj.profile.city }}</p>
                         <p>Почта: {{ user_obj.email }}</p>
                         <p>Телефон: {{ user_obj.profile.mobile_phone }}</p>
-                        <p>Бан: {{ user_obj.profile.ban }}</p>
                     </div>
                 </div>
                 <div class="col-md-5">
                     <div class="card-body">
                         <p>Тип: {{ user_obj.profile.type }}</p>
                         <p>Уведомления: {{ user_obj.profile.notification }}</p>
+                        <p>Бан: {{ user_obj.profile.ban }}</p>
                         {% if user_obj.profile.type == 'driver' %}
                             <p>Статус: {{ user_obj.profile.status }}</p>
                             <p>Авто: {{ user_obj.profile.car }}</p>
@@ -54,16 +54,11 @@
         <div class="row justify-content-center">
             <a href="{% url 'accounts:user_update' user_obj.pk %}" class="user_links">Изменить</a>
             <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
-             <form action="{% url 'accounts:ban_change' user_obj.pk %}" method="post">
-                                                {% csrf_token %}
-{#                                                <input type="hidden" id="custId" name="announcement_id"#}
-{#                                                       value="{{ announcement.pk }}">#}
-{#                                                <label for="quantity" style="font-size: 12px">Кол-во:</label>#}
-{#                                                <input type="number" id="quantity" name="quantity" min="1"#}
-{#                                                       max="{{ announcement.seats }}" value="1">#}
-                                                <p><input type="submit" value="Бан"
-                                                                              class="btn links btn-success"></p>
-                                            </form>
+            <form action="{% url 'accounts:ban_change' user_obj.pk %}" method="post">
+                {% csrf_token %}
+                <p><input type="submit" value="{% if user_obj.profile.ban %} Разбанить {% else %} Забанить {% endif %}"
+                          class="btn links btn-success"></p>
+            </form>
         </div>
     {% endfor %}
     {% if is_paginated %}
