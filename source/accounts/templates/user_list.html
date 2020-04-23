@@ -57,7 +57,7 @@
             <form action="{% url 'accounts:ban_change' user_obj.pk %}" method="post">
                 {% csrf_token %}
                 <p><input type="submit" value="{% if user_obj.profile.ban %} Разбанить {% else %} Забанить {% endif %}"
-                          class="btn links btn-success"></p>
+                          class="btn links btn-success "></p>
             </form>
         </div>
     {% endfor %}

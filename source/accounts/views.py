@@ -21,6 +21,7 @@ class LoginView(LoginView):
         Profiles.objects.get_or_create(user=self.request.user)
         if self.request.user.profile.ban == True:
             raise PermissionDenied("Вы получили бан, доступ к сайту запрещен!")
+            auth_logout(request)
         return super().get_success_url()
 
 
@@ -147,7 +148,8 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         return reverse('accounts:user_detail', kwargs={'pk': self.object.pk})
 
     def test_func(self):
-        return self.get_object() == self.request.user
+        user_requesting = self.request.user
+        return user_requesting.is_staff or self.get_object() == self.request.user
 
 
 class UserPasswordChangeView(UserPassesTestMixin, UpdateView):
