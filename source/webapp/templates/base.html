@@ -1,4 +1,5 @@
-{% load staticfiles %}
+{% load static %}
+{% load auth_extras %}
 {% load widget_tweaks %}
 <!doctype html>
 <html lang="en">
@@ -44,7 +45,7 @@
                     {% block menu %}{% endblock %}
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    {% if request.user.is_staff %}
+                    {% if request.user.is_staff or request.user|has_group:'administrators' %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'accounts:user_list' %}">Список пользователей</a></li>
                         <li class="nav-item"><a href="{% url 'accounts:user_search' %}" class="nav-link">Поиск</a></li>
                     {% endif %}
