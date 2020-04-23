@@ -207,8 +207,11 @@ class UserListView(UserPassesTestMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['drivers'] = Profiles.objects.filter(type='driver')
-        context['clients'] = Profiles.objects.filter(type='client')
+        context['drivers'] = User.objects.all().filter(Q(profile__type='driver'))
+        context['clients'] = User.objects.all().filter(Q(profile__type='client'))
+        context['banned'] = User.objects.all().filter(Q(groups__name="banned"))
+        # context['banned'] = User.objects.all()
+
         # context['drivers'] = Profiles.objects.filter(type='driver')
         # context['clients'] = Profiles.objects.filter(type='client')
         return context
@@ -217,11 +220,14 @@ class UserListView(UserPassesTestMixin, ListView):
         drivers = self.request.GET.get('drivers')
         # print(self.request.GET.get('drivers'))
         clients = self.request.GET.get('clients')
+        banned = self.request.GET.get('banned')
         # print(self.request.GET.get('clients'))
         if drivers:
             return User.objects.all().filter(Q(profile__type='driver'))
         elif clients:
             return User.objects.all().filter(Q(profile__type='client'))
+        elif banned:
+            return User.objects.all().filter(Q(groups__name="banned"))
         return User.objects.all()
 
     def test_func(self):
