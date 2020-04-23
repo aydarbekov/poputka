@@ -5,10 +5,12 @@ from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView
-from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2, UserChangePasswordForm
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView, FormView
+from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2, UserChangePasswordForm, FullSearchForm
 from accounts.models import User, Profiles
 from webapp.forms import ReviewForm
+from django.shortcuts import redirect
+from django.utils.http import urlencode
 
 
 class LoginView(LoginView):
@@ -163,6 +165,8 @@ class UserListView(UserPassesTestMixin, ListView):
     model = User
     template_name = 'user_list.html'
     context_object_name = 'users'
+    paginate_by = 2
+    paginate_orphans = 1
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
@@ -177,8 +181,79 @@ class UserListView(UserPassesTestMixin, ListView):
             return Profiles.objects.filter(Q(type='driver'))
         elif clients:
             return Profiles.objects.filter(Q(type='client'))
-        return User.objects.all
+        return User.objects.all()
 
     def test_func(self):
         user = self.request.user
         return user.is_staff
+
+
+class UserSearchView(FormView):
+    template_name = 'search.html'
+    form_class = FullSearchForm
+
+    # def test_func(self):
+    #     user_requesting = self.request.user
+    #     user_detail = User.objects.get(pk=self.kwargs['pk'])
+    #     return user_requesting.is_staff or user_requesting.groups.filter(name='principal_staff') or user_detail == user_requesting
+
+    def form_valid(self, form):
+        query = urlencode(form.cleaned_data)
+        url = reverse('accounts:search_results') + '?' + query
+        return redirect(url)
+
+
+class SearchResultsView(UserPassesTestMixin, ListView):
+    model = Profiles
+    template_name = 'search.html'
+    context_object_name = 'users'
+    paginate_by = 2
+    paginate_orphans = 1
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff or user.groups.filter(name='principal_staff')
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = FullSearchForm(data=self.request.GET)
+        if form.is_valid():
+            query = self.get_search_query(form)
+            queryset = queryset.filter(query).distinct()
+        return queryset
+
+    def get_context_data(self, *, object_list=None, group_list=None, text=None, user_list=None, **kwargs):
+        form = FullSearchForm(data=self.request.GET)
+        if form.is_valid():
+            text = form.cleaned_data.get("text")
+        query = self.get_query_string()
+        users = User.objects.filter(first_name__icontains=text)
+        return super().get_context_data(
+            form=form, query=query, user_list=users
+        )
+
+    def get_query_string(self):
+        data = {}
+        for key in self.request.GET:
+            if key != 'page':
+                data[key] = self.request.GET.get(key)
+        return urlencode(data)
+
+    def get_search_query(self, form):
+        query = Q()
+        text = form.cleaned_data.get('text').capitalize()
+        if text:
+            in_username = form.cleaned_data.get('in_username')
+            if in_username:
+                query = query | Q(user__username__icontains=text)
+            in_first_name = form.cleaned_data.get('in_first_name')
+            if in_first_name:
+                if "-" in text:
+                    first_name, last_name = text.split('-')
+                    query = query | Q(user__first_name__icontains=first_name) | Q(user__last_name__icontains=last_name)
+                else:
+                    query = query | Q(user__first_name__icontains=text)
+            in_phone = form.cleaned_data.get('in_phone')
+            if in_phone:
+                query = query | Q(user__profile__mobile_phone__icontains=text)
+        return query

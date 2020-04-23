@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block extra_class %} header{% endblock %}
+{% block menu %}
+{% endblock %}
+{% block content %}
+<form method="post" action="{% url "accounts:user_search" %}">
+    <div class="form-group">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+        {% endfor %}
+        {% for field in form %}
+            <div class="form-group">
+            <label for="{{ field.id_for_label }}"></label>
+            <div class="form-group" id="{{ field.label }}" aria-describedby="{{ field.label }}">{{ field.label }}: {{ field }}</div>
+        {% for error in field.errors %}
+                <p class="form-error">{{ error }}</p>
+        {% endfor %}
+        {% endfor %}
+             <button type="submit" class="col-5 col-md-3 col-lg-1 btn region mx-2"><i class="fas fa-search"></i></button>
+            </div>
+    </div>
+</form>
+        {% include 'user_search_result.html'%}
+        <p class="text-center">Не найдено.</p>
+{% endblock %}
+
