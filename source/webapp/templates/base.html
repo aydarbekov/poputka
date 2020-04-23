@@ -1,4 +1,5 @@
-{% load staticfiles %}
+{% load static %}
+{% load auth_extras %}
 {% load widget_tweaks %}
 <!doctype html>
 <html lang="en">
@@ -35,7 +36,7 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="{% url 'webapp:index' %}">Главная</a>
                     </li>
-                    {% if request.user.is_authenticated %}
+                    {% if request.user.is_authenticated and not request.user|has_group:'banned'%}
                         <li class="nav-item"><a class="nav-link" href="{% url 'webapp:announce_create' %}">Добавить объявление</a></li>
                     {% endif %}
                     {#                    <li class="nav-item active"><a class="nav-link" href="#"></a></li>#}
@@ -44,7 +45,7 @@
                     {% block menu %}{% endblock %}
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    {% if request.user.is_staff %}
+                    {% if request.user.is_staff or request.user|has_group:'administrators' %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'accounts:user_list' %}">Список пользователей</a></li>
                         <li class="nav-item"><a href="{% url 'accounts:user_search' %}" class="nav-link">Поиск</a></li>
                     {% endif %}

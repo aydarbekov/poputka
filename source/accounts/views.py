@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.db.models import Q
 from django.contrib.auth import login
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -5,7 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView, FormView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView, FormView, View
 from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2, UserChangePasswordForm, FullSearchForm
 from accounts.models import User, Profiles
 from webapp.forms import ReviewForm
@@ -18,9 +19,44 @@ class LoginView(LoginView):
     def get_success_url(self):
         # print(self.request.user)
         # print(self.request.user.profile.ban)
-        if self.request.user.profile.ban == True:
-            raise PermissionDenied("Вы получили бан, доступ к сайту запрещен!")
+        Profiles.objects.get_or_create(user=self.request.user)
+        # print(self.request.user.groups)
+        # print(self.request.user.groups.filter(name="banned"))
+        # print(self.request.user.groups.filter(name="banned").exists())
+        # print(self.request.user)
+        # if self.request.user.ban:
+        if self.request.user.groups.filter(name="banned").exists():
+            raise PermissionDenied("Вы получили бан, доступ к сайту ограничен!")
         return super().get_success_url()
+
+
+class BanChangeView(View):
+    def post(self, *args, **kwargs):
+        user = User.objects.get(pk=kwargs['pk'])
+        Profiles.objects.get_or_create(user=user)
+        group = Group.objects.get(name='banned')
+        # print("БЫЛО", user.groups.filter(name="banned").exists())
+        if user.groups.filter(name="banned").exists():
+            user.groups.remove(group)
+            # print("BAAN", user.groups.filter(name="banned").exists())
+        else:
+            user.groups.add(group)
+            # print("MERCY", user.groups.filter(name="banned").exists())
+        return redirect('accounts:user_list')
+
+# class BanChangeView(View):
+#     def post(self, *args, **kwargs):
+#         user = User.objects.get(pk=kwargs['pk'])
+#         Profiles.objects.get_or_create(user=user)
+#         print(user)
+#         print(user.profile.ban)
+#         if user.profile.ban:
+#             user.profile.ban = False
+#         else:
+#             user.profile.ban = True
+#         print(user.profile.ban)
+#         user.profile.save()
+#         return redirect('accounts:user_list')
 
 
 class SignUp(CreateView):
@@ -131,7 +167,9 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         return reverse('accounts:user_detail', kwargs={'pk': self.object.pk})
 
     def test_func(self):
-        return self.get_object() == self.request.user
+        user_requesting = self.request.user
+        return user_requesting.is_staff or user_requesting.groups.filter(name='administrators') \
+               or self.get_object() == self.request.user
 
 
 class UserPasswordChangeView(UserPassesTestMixin, UpdateView):
@@ -158,29 +196,41 @@ class UserDeleteView(UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('webapp:index')
 
     def test_func(self):
-        return self.get_object() == self.request.user
+        user_requesting = self.request.user
+        return user_requesting.is_staff or user_requesting.groups.filter(name='administrators') \
+               or self.get_object() == self.request.user
 
 
 class UserListView(UserPassesTestMixin, ListView):
     model = User
     template_name = 'user_list.html'
     context_object_name = 'users'
-    paginate_by = 2
+    paginate_by = 5
     paginate_orphans = 1
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['drivers'] = Profiles.objects.filter(type='driver')
-        context['clients'] = Profiles.objects.filter(type='client')
+        context['drivers'] = User.objects.all().filter(Q(profile__type='driver'))
+        context['clients'] = User.objects.all().filter(Q(profile__type='client'))
+        context['banned'] = User.objects.all().filter(Q(groups__name="banned"))
+        # context['banned'] = User.objects.all()
+
+        # context['drivers'] = Profiles.objects.filter(type='driver')
+        # context['clients'] = Profiles.objects.filter(type='client')
         return context
 
     def get_queryset(self, *args, **kwargs):
         drivers = self.request.GET.get('drivers')
+        # print(self.request.GET.get('drivers'))
         clients = self.request.GET.get('clients')
+        banned = self.request.GET.get('banned')
+        # print(self.request.GET.get('clients'))
         if drivers:
-            return Profiles.objects.filter(Q(type='driver'))
+            return User.objects.all().filter(Q(profile__type='driver'))
         elif clients:
-            return Profiles.objects.filter(Q(type='client'))
+            return User.objects.all().filter(Q(profile__type='client'))
+        elif banned:
+            return User.objects.all().filter(Q(groups__name="banned"))
         return User.objects.all()
 
     def test_func(self):
