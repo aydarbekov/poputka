@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'api',
     'widget_tweaks',
     'corsheaders',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,6 @@ REST_FRAMEWORK = {
     # )
 }
 
+CRONJOBS = [
+    ('0 * * * *', 'webapp.parser.parsing_new_posts')
+]
