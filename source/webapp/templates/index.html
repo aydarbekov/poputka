@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load static %}
+{% load auth_extras %}
 {% block extra_class %}main-header{% endblock %}
 {% block additional %}
     <div class="additional hidden"></div>{% endblock %}
@@ -71,10 +72,13 @@
                                     <p class="card-text">
                                         <b>Направление</b> {{ announcement.get_place_from_display }}-{{ announcement.get_place_to_display }}
                                     </p>
-                                    {% if announcement.description %}<p class="card-text">Описание: {{ announcement.description }}</p>{% endif %}
+                                    {% if announcement.description %}
+                                        <p class="card-text">Описание: {{ announcement.description }}</p>{% endif %}
                                     <p class="card-text">
                                         <b>Время:</b> {{ announcement.departure_time|date:'d-m-y   - H:m' }}</p>
-                                    <p class="card-text"><b>Мест:</b> {{ announcement.seats }}{% if announcement.luggage %}<b class="ml-3">Багаж:</b>{{ announcement.luggage }}{% endif %}</p>
+                                    <p class="card-text"><b>Мест:</b>
+                                        {{ announcement.seats }}{% if announcement.luggage %}<b class="ml-3">Багаж:</b>
+                                            {{ announcement.luggage }}{% endif %}</p>
                                     {% if announcement.price %}
                                         <p class="card-text">{{ announcement.price }} сом</p>
                                     {% endif %}
@@ -96,7 +100,7 @@
                                                 <input type="number" id="quantity" name="quantity" min="1"
                                                        max="{{ announcement.seats }}" value="1">
                                                 <p class="d-inline-block"><input type="submit" value="Бронь"
-                                                                              class="btn links btn-success"></p>
+                                                                                 class="btn links btn-success"></p>
                                             </form>
                                         {% elif user in announcement.clients.all %}
                                             <a href="{% url 'webapp:client_delete' announcement.pk %}"

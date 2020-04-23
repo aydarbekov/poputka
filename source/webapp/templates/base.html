@@ -36,7 +36,7 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="{% url 'webapp:index' %}">Главная</a>
                     </li>
-                    {% if request.user.is_authenticated %}
+                    {% if request.user.is_authenticated and not request.user|has_group:'banned'%}
                         <li class="nav-item"><a class="nav-link" href="{% url 'webapp:announce_create' %}">Добавить объявление</a></li>
                     {% endif %}
                     {#                    <li class="nav-item active"><a class="nav-link" href="#"></a></li>#}
