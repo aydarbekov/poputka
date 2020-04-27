@@ -1,12 +1,62 @@
+from django.contrib.auth.models import Group
+from django.db.models import Q
 from django.contrib.auth import login
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
-from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2, UserChangePasswordForm
-from accounts.models import Profiles
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView, FormView, View
+from accounts.forms import SignUpForm, UpdateForm, ProfileForm_2, UserChangePasswordForm, FullSearchForm
+from accounts.models import User, Profiles
 from webapp.forms import ReviewForm
+from django.shortcuts import redirect
+from django.utils.http import urlencode
+
+
+class LoginView(LoginView):
+
+    def get_success_url(self):
+        # print(self.request.user)
+        # print(self.request.user.profile.ban)
+        Profiles.objects.get_or_create(user=self.request.user)
+        # print(self.request.user.groups)
+        # print(self.request.user.groups.filter(name="banned"))
+        # print(self.request.user.groups.filter(name="banned").exists())
+        # print(self.request.user)
+        # if self.request.user.ban:
+        if self.request.user.groups.filter(name="banned").exists():
+            raise PermissionDenied("Вы получили бан, доступ к сайту ограничен!")
+        return super().get_success_url()
+
+
+class BanChangeView(View):
+    def post(self, *args, **kwargs):
+        user = User.objects.get(pk=kwargs['pk'])
+        Profiles.objects.get_or_create(user=user)
+        group = Group.objects.get(name='banned')
+        # print("БЫЛО", user.groups.filter(name="banned").exists())
+        if user.groups.filter(name="banned").exists():
+            user.groups.remove(group)
+            # print("BAAN", user.groups.filter(name="banned").exists())
+        else:
+            user.groups.add(group)
+            # print("MERCY", user.groups.filter(name="banned").exists())
+        return redirect('accounts:user_list')
+
+# class BanChangeView(View):
+#     def post(self, *args, **kwargs):
+#         user = User.objects.get(pk=kwargs['pk'])
+#         Profiles.objects.get_or_create(user=user)
+#         print(user)
+#         print(user.profile.ban)
+#         if user.profile.ban:
+#             user.profile.ban = False
+#         else:
+#             user.profile.ban = True
+#         print(user.profile.ban)
+#         user.profile.save()
+#         return redirect('accounts:user_list')
 
 
 class SignUp(CreateView):
@@ -75,6 +125,7 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         if 'form' not in context:
             context['form'] = self.form_class(instance=self.object)
         if 'form2' not in context:
+            Profiles.objects.get_or_create(user=self.object)
             context['form2'] = self.second_form_class(instance=self.object.profile)
         return context
 
@@ -92,10 +143,10 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         self.object.save()
 
         if form2.cleaned_data['type'] == 'client':
-            print('ddddddddd')
-            print(form2.cleaned_data['car'])
+            # print('ddddddddd')
+            # print(form2.cleaned_data['car'])
             form2.cleaned_data['car'] = None
-            print(form2.cleaned_data['car'])
+            # print(form2.cleaned_data['car'])
 
             form2.cleaned_data['car_model'] = None
             form2.cleaned_data['car_number'] = None
@@ -116,7 +167,9 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
         return reverse('accounts:user_detail', kwargs={'pk': self.object.pk})
 
     def test_func(self):
-        return self.get_object() == self.request.user
+        user_requesting = self.request.user
+        return user_requesting.is_staff or user_requesting.groups.filter(name='administrators') \
+               or self.get_object() == self.request.user
 
 
 class UserPasswordChangeView(UserPassesTestMixin, UpdateView):
@@ -143,4 +196,114 @@ class UserDeleteView(UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('webapp:index')
 
     def test_func(self):
-        return self.get_object() == self.request.user
+        user_requesting = self.request.user
+        return user_requesting.is_staff or user_requesting.groups.filter(name='administrators') \
+               or self.get_object() == self.request.user
+
+
+class UserListView(UserPassesTestMixin, ListView):
+    model = User
+    template_name = 'user_list.html'
+    context_object_name = 'users'
+    paginate_by = 5
+    paginate_orphans = 1
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['drivers'] = User.objects.all().filter(Q(profile__type='driver'))
+        context['clients'] = User.objects.all().filter(Q(profile__type='client'))
+        context['banned'] = User.objects.all().filter(Q(groups__name="banned"))
+        # context['banned'] = User.objects.all()
+
+        # context['drivers'] = Profiles.objects.filter(type='driver')
+        # context['clients'] = Profiles.objects.filter(type='client')
+        return context
+
+    def get_queryset(self, *args, **kwargs):
+        drivers = self.request.GET.get('drivers')
+        # print(self.request.GET.get('drivers'))
+        clients = self.request.GET.get('clients')
+        banned = self.request.GET.get('banned')
+        # print(self.request.GET.get('clients'))
+        if drivers:
+            return User.objects.all().filter(Q(profile__type='driver'))
+        elif clients:
+            return User.objects.all().filter(Q(profile__type='client'))
+        elif banned:
+            return User.objects.all().filter(Q(groups__name="banned"))
+        return User.objects.all()
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff
+
+
+class UserSearchView(FormView):
+    template_name = 'search.html'
+    form_class = FullSearchForm
+
+    # def test_func(self):
+    #     user_requesting = self.request.user
+    #     user_detail = User.objects.get(pk=self.kwargs['pk'])
+    #     return user_requesting.is_staff or user_requesting.groups.filter(name='principal_staff') or user_detail == user_requesting
+
+    def form_valid(self, form):
+        query = urlencode(form.cleaned_data)
+        url = reverse('accounts:search_results') + '?' + query
+        return redirect(url)
+
+
+class SearchResultsView(UserPassesTestMixin, ListView):
+    model = Profiles
+    template_name = 'search.html'
+    context_object_name = 'users'
+    paginate_by = 2
+    paginate_orphans = 1
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_staff or user.groups.filter(name='principal_staff')
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = FullSearchForm(data=self.request.GET)
+        if form.is_valid():
+            query = self.get_search_query(form)
+            queryset = queryset.filter(query).distinct()
+        return queryset
+
+    def get_context_data(self, *, object_list=None, group_list=None, text=None, user_list=None, **kwargs):
+        form = FullSearchForm(data=self.request.GET)
+        if form.is_valid():
+            text = form.cleaned_data.get("text")
+        query = self.get_query_string()
+        users = User.objects.filter(first_name__icontains=text)
+        return super().get_context_data(
+            form=form, query=query, user_list=users
+        )
+
+    def get_query_string(self):
+        data = {}
+        for key in self.request.GET:
+            if key != 'page':
+                data[key] = self.request.GET.get(key)
+        return urlencode(data)
+
+    def get_search_query(self, form):
+        query = Q()
+        text = form.cleaned_data.get('text').capitalize()
+        if text:
+            in_username = form.cleaned_data.get('in_username')
+            if in_username:
+                query = query | Q(user__username__icontains=text)
+            in_first_name = form.cleaned_data.get('in_first_name')
+            if in_first_name:
+                if "-" in text:
+                    first_name, last_name = text.split('-')
+                    query = query | Q(user__first_name__icontains=first_name) | Q(user__last_name__icontains=last_name)
+                else:
+                    query = query | Q(user__first_name__icontains=text)
+            in_phone = form.cleaned_data.get('in_phone')
+            if in_phone:
+                query = query | Q(user__profile__mobile_phone__icontains=text)
+        return query

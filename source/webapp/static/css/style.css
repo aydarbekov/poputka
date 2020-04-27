@@ -63,7 +63,7 @@ a:hover{
     border-top-left-radius: 100%;
 }
 .car {
-    margin: -2% 55%;
+    margin: -1% 55%;
     position: absolute;
     z-index: 1;
     height: 100%;
@@ -143,12 +143,27 @@ a:hover{
 .user_links{
     background-color:#8F283A;
     color: white;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 20px;
-    width: 120px;
+    /*width: 120px;*/
+    padding-left: 20px;
+    padding-right: 20px;
     text-align: center;
     margin-left: 15px;
     font-size: 12px;
+}
+.ban{
+    border-radius: 20px;
+    font-size: 12px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin-left: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: center;
 }
 .comment img{
     height: 40px;
@@ -165,4 +180,6 @@ a:hover{
 .fa-star{
     color: rgb(255 138 0);
 }
-
+.pagination a:hover{
+    color: #559988;
+}

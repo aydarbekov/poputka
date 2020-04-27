@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_class %} header{% endblock %}
+{% block menu %}
+{% endblock %}
+{% block content %}
+    {% if exception %}
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 7rem">
+            <div style="color: red; font-size: 2rem">{{ exception }}</div>
+        </div>
+    {% else %}
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 7rem">403 Forbidden</div>
+    {% endif %}
+{% endblock %}

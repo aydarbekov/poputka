@@ -1,7 +1,7 @@
 import csv
 import datetime
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
@@ -74,6 +74,13 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
     template_name = 'announce_create.html'
     # form_class = AnnounceCreationForm
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if self.request.user.groups.filter(name="banned").exists():
+            raise PermissionDenied("Вы получили бан, доступ к сайту ограничен!")
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(AnnounceCreateView, self).get_context_data(**kwargs)
         try:
@@ -138,6 +145,14 @@ class AnnounceUpdateView(LoginRequiredMixin, UpdateView):
             'description', 'photo', 'status']
     context_object_name = 'announce'
 
+    def dispatch(self, request, *args, **kwargs):
+        print("Entered")
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if self.request.user.groups.filter(name="banned").exists():
+            raise PermissionDenied("Вы получили бан, доступ к сайту ограничен!")
+        return super().dispatch(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse('webapp:index')
 
@@ -145,6 +160,13 @@ class AnnounceUpdateView(LoginRequiredMixin, UpdateView):
 class AnnounceDeleteView(LoginRequiredMixin, DeleteView):
     model = Announcements
     template_name = 'delete.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if self.request.user.groups.filter(name="banned").exists():
+            raise PermissionDenied("Вы получили бан, доступ к сайту ограничен!")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse('webapp:index')
@@ -156,6 +178,8 @@ class ClientAddView(View):
         quantity = self.request.POST.get('quantity')
         announce = Announcements.objects.get(id=announcement_id)
         user = self.request.user
+        if self.request.user.groups.filter(name="banned").exists():
+            raise PermissionDenied("Вы получили бан, доступ к сайту ограничен!")
         new = ClientsInAnnounce(announcement=announce, user=user, seats=int(quantity))
         new.save()
         announce.seats -= int(quantity)

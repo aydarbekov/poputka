@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load auth_extras %}
+{% block extra_class %} header{% endblock %}
+{% block menu %}
+{% endblock %}
+{% block content %}
+    <h1>Пользователи</h1>
+    <div class="row justify-content-center" id="users_list">
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}">Все</a>
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}?drivers={{ drivers }}">Водители</a>
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}?clients={{ clients }}">Клиенты</a>
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}?banned={{ banned }}">Забаненные</a>
+    </div>
+    {% if is_paginated %}
+                {% include 'partial/pagination1.html' %}
+    {% endif %}
+    {% for user_obj in users %}
+        <div class="card my-3 user_card">
+            <div class="row no-gutters">
+                <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
+                     title='Профиль - {{ user_obj.username }}'>
+                    {% if user_obj.profile.photo %}
+                        <img src="{{ user_obj.profile.photo.url }}" class="card-img"
+                             alt="Author photo">
+                    {% else %}
+                        <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
+                    {% endif %}
+                </div>
+                <div class="col-md-5">
+                    <div class="card-body">
+                        <p>Имя: <b>{{ user_obj.first_name }}</b></p>
+                        <p>Фамилия: {{ user_obj.last_name }}</p>
+                        <p>Страна: {{ user_obj.profile.country }}</p>
+                        <p>Город: {{ user_obj.profile.city }}</p>
+                        <p>Почта: {{ user_obj.email }}</p>
+                        <p>Телефон: {{ user_obj.profile.mobile_phone }}</p>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="card-body">
+                        <p>Тип: {{ user_obj.profile.type }}</p>
+                        <p>Уведомления: {{ user_obj.profile.notification }}</p>
+{#                        <p>Бан: {{ user_obj.profile.ban }}</p>#}
+                        <p>Бан: {{ user_obj|has_group:'banned' }}</p>
+                        {% if user_obj.profile.type == 'driver' %}
+                            <p>Статус: {{ user_obj.profile.status }}</p>
+                            <p>Авто: {{ user_obj.profile.car }}</p>
+                            <p>Модель авто: {{ user_obj.profile.car_model }}</p>
+                            <p>Номер авто: {{ user_obj.profile.car_number }}</p>
+                            <p>Кол-во сидений: {{ user_obj.profile.car_seats }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <a href="{% url 'accounts:user_update' user_obj.pk %}" class="user_links">Изменить</a>
+            <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
+            <form action="{% url 'accounts:ban_change' user_obj.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="{% if user_obj|has_group:'banned' %} Разбанить {% else %} Забанить {% endif %}"
+                          class="ban btn btn-success">
+{#                <input type="submit" value="{% if user_obj.profile.ban %} Разбанить {% else %} Забанить {% endif %}"#}
+{#                          class="ban btn btn-success ">#}
+            </form>
+        </div>
+    {% endfor %}
+    {% if is_paginated %}
+                {% include 'partial/pagination1.html' %}
+    {% endif %}
+{% endblock %}

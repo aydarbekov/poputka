@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block menu %}
+{% endblock %}
+{% block content %}
+    <h1>Пользователи</h1>
+    <div class="row justify-content-center" id="users_list">
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}">Все</a>
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}?drivers={{ drivers }}">Водители</a>
+        <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
+           href="{% url 'accounts:user_list' %}?clients={{ clients }}">Клиенты</a>
+    </div>
+    {% for user_obj in users %}
+        <div class="card my-3 user_card">
+            <div class="row no-gutters">
+                <div class="card-img col-md-2" data-toggle="tooltip" data-placement="top"
+                     title='Профиль - {{ user_obj.username }}'>
+                    {% if user_obj.photo %}
+                        <img src="{{ user_obj.photo.url }}" class="card-img"
+                             alt="Author photo">
+                    {% else %}
+                        <img src="{% static 'No_person-1.jpg' %}" class="card-img" alt="No photo">
+                    {% endif %}
+                </div>
+                <div class="col-md-5">
+                    <div class="card-body">
+                        <p>USERNAME: <b>{{ user_obj.user.first_name }}</b></p>
+                        <p>Имя: <b>{{ user_obj.user.first_name }}</b></p>
+                        <p>Фамилия: {{ user_obj.user.last_name }}</p>
+                        <p>Страна: {{ user_obj.country }}</p>
+                        <p>Город: {{ user_obj.city }}</p>
+                        <p>Почта: {{ user_obj.user.email }}</p>
+                        <p>Телефон: {{ user_obj.mobile_phone }}</p>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="card-body">
+                        <p>Тип: {{ user_obj.type }}</p>
+                        <p>Уведомления: {{ user_obj.notification }}</p>
+                        {% if user_obj.type == 'driver' %}
+                            <p>Статус: {{ user_obj.status }}</p>
+                            <p>Авто: {{ user_obj.car }}</p>
+                            <p>Модель авто: {{ user_obj.car_model }}</p>
+                            <p>Номер авто: {{ user_obj.car_number }}</p>
+                            <p>Кол-во сидений: {{ user_obj.car_seats }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <a href="{% url 'accounts:user_update' user_obj.pk %}" class="user_links">Изменить</a>
+            <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
+        </div>
+    {% endfor %}
+        {% if is_paginated %}
+                {% include 'partial/pagination.html' %}
+        {% endif %}
+{% endblock %}

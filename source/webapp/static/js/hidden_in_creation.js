@@ -15,11 +15,20 @@ car_number = car_number_child.parentNode;
 car_seats_child = document.getElementById("id_car_seats");
 car_seats = car_seats_child.parentNode;
 
-statuss.hidden = true;
-car_mark.hidden = true;
-car_model.hidden = true;
-car_number.hidden = true;
-car_seats.hidden = true;
+
+if (type.value === "client" || type === '' ) {
+    statuss.hidden = true;
+    car_mark.hidden = true;
+    car_model.hidden = true;
+    car_number.hidden = true;
+    car_seats.hidden = true;
+  } else if (type === "driver"){
+    statuss.hidden = false;
+    car_mark.hidden = false;
+    car_model.hidden = false;
+    car_number.hidden = false;
+    car_seats.hidden = false;
+  }
 
 function hide(type) {       //Создаем функцию прятания полей, принимает тип
 
