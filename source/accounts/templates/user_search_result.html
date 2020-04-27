@@ -58,8 +58,6 @@
                 {% csrf_token %}
                 <input type="submit" value="{% if user_obj.user|has_group:'banned' %} Разбанить {% else %} Забанить {% endif %}"
                           class="ban btn btn-success">
-{#                <input type="submit" value="{% if user_obj.profile.ban %} Разбанить {% else %} Забанить {% endif %}"#}
-{#                          class="ban btn btn-success ">#}
             </form>
         </div>
     {% endfor %}
