@@ -13,7 +13,6 @@ from webapp.forms import ReviewForm
 from django.shortcuts import redirect
 from django.utils.http import urlencode
 
-
 class LoginView(LoginView):
 
     def get_success_url(self):
@@ -42,7 +41,8 @@ class BanChangeView(View):
         else:
             user.groups.add(group)
             # print("MERCY", user.groups.filter(name="banned").exists())
-        return redirect('accounts:user_list')
+        # return redirect('accounts:user_list')
+        return redirect(site)
 
 # class BanChangeView(View):
 #     def post(self, *args, **kwargs):
@@ -208,6 +208,11 @@ class UserListView(UserPassesTestMixin, ListView):
     paginate_by = 5
     paginate_orphans = 1
 
+    def get_url(self):
+        global site
+        site = self.request.path
+        return site
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['drivers'] = User.objects.all().filter(Q(profile__type='driver'))
@@ -217,6 +222,7 @@ class UserListView(UserPassesTestMixin, ListView):
 
         # context['drivers'] = Profiles.objects.filter(type='driver')
         # context['clients'] = Profiles.objects.filter(type='client')
+        self.get_url()
         return context
 
     def get_queryset(self, *args, **kwargs):
@@ -260,11 +266,17 @@ class SearchResultsView(UserPassesTestMixin, ListView):
     paginate_by = 2
     paginate_orphans = 1
 
+    def get_url(self):
+        global site
+        site = self.request.get_full_path()
+        return site
+
     def test_func(self):
         user = self.request.user
         return user.is_staff or user.groups.filter(name='principal_staff')
 
     def get_queryset(self):
+        self.get_url()
         queryset = super().get_queryset()
         form = FullSearchForm(data=self.request.GET)
         if form.is_valid():

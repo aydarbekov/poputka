@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load auth_extras %}
 {% block menu %}
 {% endblock %}
 {% block content %}
@@ -26,7 +27,7 @@
                 </div>
                 <div class="col-md-5">
                     <div class="card-body">
-                        <p>USERNAME: <b>{{ user_obj.user.first_name }}</b></p>
+                        <p>PK: <b>{{ user_obj.user.pk }}</b></p>
                         <p>Имя: <b>{{ user_obj.user.first_name }}</b></p>
                         <p>Фамилия: {{ user_obj.user.last_name }}</p>
                         <p>Страна: {{ user_obj.country }}</p>
@@ -53,6 +54,11 @@
         <div class="row justify-content-center">
             <a href="{% url 'accounts:user_update' user_obj.pk %}" class="user_links">Изменить</a>
             <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="user_links">Удалить</a>
+            <form action="{% url 'accounts:ban_change' user_obj.user.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="{% if user_obj.user|has_group:'banned' %} Разбанить {% else %} Забанить {% endif %}"
+                          class="ban btn btn-success">
+            </form>
         </div>
     {% endfor %}
         {% if is_paginated %}
