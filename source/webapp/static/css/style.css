@@ -180,4 +180,6 @@ a:hover{
 .fa-star{
     color: rgb(255 138 0);
 }
-
+.pagination a:hover{
+    color: #559988;
+}
