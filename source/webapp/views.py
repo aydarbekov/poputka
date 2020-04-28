@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from django.urls import reverse
 from webapp.forms import ReviewForm, AnnouncementForm
 from webapp.models import Announcements, ANNOUNCEMENT_TYPE_CHOICES, REGION_CHOICES, ANNOUNCEMENT_STATUS_CHOICES, \

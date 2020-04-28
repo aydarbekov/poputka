@@ -16,6 +16,9 @@
         <a class="col-5 col-md-3 col-lg-1 btn region mx-2"
            href="{% url 'accounts:user_list' %}?banned={{ banned }}">Забаненные</a>
     </div>
+    {% if is_paginated %}
+                {% include 'partial/pagination1.html' %}
+    {% endif %}
     {% for user_obj in users %}
         <div class="card my-3 user_card">
             <div class="row no-gutters">
@@ -30,6 +33,7 @@
                 </div>
                 <div class="col-md-5">
                     <div class="card-body">
+                        <p>PK: <b>{{ user_obj.pk }}</b></p>
                         <p>Имя: <b>{{ user_obj.first_name }}</b></p>
                         <p>Фамилия: {{ user_obj.last_name }}</p>
                         <p>Страна: {{ user_obj.profile.country }}</p>
@@ -61,13 +65,13 @@
             <form action="{% url 'accounts:ban_change' user_obj.pk %}" method="post">
                 {% csrf_token %}
                 <input type="submit" value="{% if user_obj|has_group:'banned' %} Разбанить {% else %} Забанить {% endif %}"
-                          class="ban btn btn-success ">
+                          class="ban btn btn-success">
 {#                <input type="submit" value="{% if user_obj.profile.ban %} Разбанить {% else %} Забанить {% endif %}"#}
 {#                          class="ban btn btn-success ">#}
             </form>
         </div>
     {% endfor %}
     {% if is_paginated %}
-                {% include 'partial/pagination.html' %}
+                {% include 'partial/pagination1.html' %}
     {% endif %}
 {% endblock %}
