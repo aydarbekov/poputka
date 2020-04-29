@@ -6,7 +6,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from webapp.parser import new_data
+# from webapp.parser import new_data
 from api import serializers
 from api.serializers import AnnouncementSerializer, UserSerializer, CarSerializer, ClientsInAnnounceSerializer
 from webapp.models import Announcements, Car, ClientsInAnnounce
@@ -120,10 +120,10 @@ class ClientsInAnnounceView(APIView):
         return Response({"status": "success"})
 
 
-class SendNewPostsView(APIView):
-    def get(self, request, *args, **kwargs):
-        posts = []
-        for post in new_data:
-            posts.append(post)
-        new_data.clear()
-        return Response({"Announces": posts})
+# class SendNewPostsView(APIView):
+#     def get(self, request, *args, **kwargs):
+#         posts = []
+#         for post in new_data:
+#             posts.append(post)
+#         new_data.clear()
+#         return Response({"Announces": posts})
