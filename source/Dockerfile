@@ -18,9 +18,12 @@ ENV PYTHONUNBUFFERED 1
 #COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN apk add --virtual poputka python3-dev musl-dev gcc zlib-dev jpeg-dev postgresql-dev \
     && pip install --upgrade pip \
+#    && pip -y install cron \
 #    && pwd \
 #    && ls /.. \
     && pip install -r requirements.txt
+#    && pwd \
+
 
 ## copy project
 #COPY . /usr/src/app/
