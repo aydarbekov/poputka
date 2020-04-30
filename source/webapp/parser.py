@@ -31,6 +31,7 @@ def parse_and_send(divs, last_publication, string):
 
 
 def parsing_new_posts():               # запихнули осноную логику в функцию для периодического вызова
+    print('start parsing')
     url_announcements = 'http://ed.kyrg.info/category/announcements/'   # Обьявили начальный юрл объявлений
     url_news = 'http://ed.kyrg.info/category/news-events/'              # Объявили начальный юрл новостей
 
@@ -56,6 +57,8 @@ def parsing_new_posts():               # запихнули осноную ло�
 
     if last != last_link or last_news != last_link_news:
         json_link = {'last_link': last, 'last_link_news': last_news}    # формируем словать для сохранения в json
+
+        print('saving to file')
         with open(os.path.join(BASE_DIR, 'parser_last_publications.json'), 'w') as f:    # открываем документ
             myfile = File(f)                                                             # так надо оказывается)
             json_string = json.dumps(json_link, indent=2)                                # создаем json строку

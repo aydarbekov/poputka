@@ -176,6 +176,9 @@ REST_FRAMEWORK = {
     # )
 }
 
+# CRONJOBS = [
+#     ('0 * * * *', 'webapp.parser.parsing_new_posts')
+# ]
 CRONJOBS = [
-    ('0 * * * *', 'webapp.parser.parsing_new_posts')
+    ('* * * * *', 'webapp.parser.parsing_new_posts')
 ]
